@@ -25,7 +25,7 @@ export class EksStack extends Stack {
       instanceType: InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
       minCapacity: 2,
       maxCapacity: 6,
-      desiredCapacity: 4,
+      desiredCapacity: 4
     });
 
     const managedPolicyNames = [

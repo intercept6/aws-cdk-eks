@@ -12,8 +12,6 @@ const networkStack = new NetworkStack(app, "NetworkStack", {
   env: { region: region }
 });
 const eksStack = new EksStack(app, "EksStack", {
-  env: {
-    region: region
-  },
+  env: { region: region },
   vpc: networkStack.vpc
 });
