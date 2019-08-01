@@ -20,17 +20,17 @@ commands:
             - ~/workspace/node_modules
   install:
     steps:
-      - npm_ci:
+      - run:
           name: Install dependencies
           command: npm ci
   build:
     steps:
-      - npm_run_build:
+      - run:
           name: Run build
           command: npm run build
   test:
     steps:
-      - npm_run_test:
+      - run:
           name: Run test
           command: npm run test
   diff:
@@ -48,6 +48,7 @@ commands:
                 -H "Authorization: token ${GITHUB_TOKEN}" \
                 -d "$data" \
                 "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${pr_number}/comments"
+            fi
   deploy:
     steps:
       - run:

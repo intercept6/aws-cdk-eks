@@ -3,7 +3,7 @@ import { SynthUtils } from "@aws-cdk/assert";
 import { EksStack } from "../lib/eks-stack";
 import { Vpc } from "@aws-cdk/aws-ec2";
 
-describe("network", () => {
+describe("eks", () => {
   test("default", () => {
     const region = "ap-northeast-1";
     const app = new App();
