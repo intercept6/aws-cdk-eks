@@ -146,7 +146,7 @@ Object {
     },
     "EksWorkerNodesASG6D4F4631": Object {
       "Properties": Object {
-        "DesiredCapacity": "4",
+        "DesiredCapacity": "2",
         "LaunchConfigurationName": Object {
           "Ref": "EksWorkerNodesLaunchConfig8425AAB8",
         },

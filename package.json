@@ -10,7 +10,7 @@
     "format": "eslint --fix \"./**/*.{ts,json}\"",
     "cdk": "cdk",
     "diff": "cdk diff",
-    "ci_diff": "cdk diff || true",
+    "ci_diff": "cdk diff 2>&1 || true",
     "ci_deploy": "cdk deploy *Stack --require-approval never",
     "test": "jest"
   },
