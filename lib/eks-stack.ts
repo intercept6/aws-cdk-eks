@@ -24,7 +24,7 @@ export class EksStack extends Stack {
     const asg = this.cluster.addCapacity("WorkerNodes", {
       instanceType: InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
       minCapacity: 2,
-      maxCapacity: 6,
+      maxCapacity: 4,
       desiredCapacity: 2
     });
 

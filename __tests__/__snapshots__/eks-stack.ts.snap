@@ -150,7 +150,7 @@ Object {
         "LaunchConfigurationName": Object {
           "Ref": "EksWorkerNodesLaunchConfig8425AAB8",
         },
-        "MaxSize": "6",
+        "MaxSize": "4",
         "MinSize": "2",
         "Tags": Array [
           Object {
