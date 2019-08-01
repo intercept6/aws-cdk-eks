@@ -15,7 +15,8 @@
     "test": "jest"
   },
   "pre-commit": [
-    "format"
+    "format",
+    "test"
   ],
   "devDependencies": {
     "@aws-cdk/assert": "^1.2.0",
