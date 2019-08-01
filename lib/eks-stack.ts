@@ -26,7 +26,6 @@ export class EksStack extends Stack {
       minCapacity: 2,
       maxCapacity: 6,
       desiredCapacity: 4,
-      spotPrice: "0.50"
     });
 
     const managedPolicyNames = [
