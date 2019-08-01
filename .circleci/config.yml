@@ -36,12 +36,12 @@ commands:
   diff:
     steps:
       - run:
-          name: cdk diff
+          name: Run cdk diff
           command: |
             if [ -n "$CIRCLE_PULL_REQUEST" ]; then
               pr_number=${CIRCLE_PULL_REQUEST##*/}
               block='```'
-              diff=$(echo -e "cdk diff\n${block}\n$(npm run --silent cdk diff)\n${block}")
+              diff=$(echo -e "npm run ci_diff\n${block}\n$(npm run --silent cdk ci_diff)\n${block}")
               data=$(jq -n --arg body "$diff" '{ body: $body }') # escape
               curl -X POST -H 'Content-Type:application/json' \
                 -H 'Accept: application/vnd.github.v3+json' \
@@ -52,9 +52,8 @@ commands:
   deploy:
     steps:
       - run:
-          name: cdk deploy
-          command: |
-            npm run deploy --require-approval never
+          name: Run cdk deploy
+          command: npm run ci_deploy
 
 jobs:
   test:
@@ -73,6 +72,7 @@ jobs:
     steps:
       - checkout
       - restore_npm
+      - install
       - diff
   deploy:
     executor:
@@ -80,6 +80,7 @@ jobs:
     steps:
       - checkout
       - restore_npm
+      - install
       - deploy
 
 workflows:

@@ -2,6 +2,8 @@
 *.d.ts
 node_modules
 !.eslintrc.js
+.idea/*
+process.yml
 
 # CDK asset staging directory
 .cdk.staging
