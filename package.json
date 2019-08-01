@@ -7,14 +7,16 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "eslint --fix \"./**/*.{ts,json}\"",
+    "format": "eslint --fix \"./**/*.{ts,json}\"",
     "cdk": "cdk",
     "test": "jest"
   },
   "pre-commit": [
-    "lint"
+    "format"
   ],
   "devDependencies": {
+    "@aws-cdk/assert": "^1.2.0",
+    "@types/jest": "^24.0.16",
     "@types/node": "8.10.45",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
@@ -22,8 +24,10 @@
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-prettier": "^3.1.0",
+    "jest": "^24.8.0",
     "pre-commit": "^1.2.2",
     "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
     "ts-node": "^8.1.0",
     "typescript": "^3.3.3333"
   },
@@ -32,5 +36,21 @@
     "@aws-cdk/aws-eks": "^1.2.0",
     "@aws-cdk/core": "^1.2.0",
     "source-map-support": "^0.5.9"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/__tests__/*.+(ts|tsx|js)"
+    ],
+    "preset": "ts-jest"
   }
 }
