@@ -1,0 +1,430 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`eks default 1`] = `
+Object {
+  "Outputs": Object {
+    "ControlPlaneClusterName3DFA380C": Object {
+      "Value": Object {
+        "Ref": "ControlPlaneE65BD0FC",
+      },
+    },
+    "ControlPlaneWorkerNodesInstanceRoleARN13C86DC7": Object {
+      "Value": Object {
+        "Fn::GetAtt": Array [
+          "ControlPlaneWorkerNodesInstanceRole47ADAFAD",
+          "Arn",
+        ],
+      },
+    },
+  },
+  "Resources": Object {
+    "ControlPlaneClusterRole3ED361B4": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "eks.",
+                      Object {
+                        "Ref": "AWS::URLSuffix",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonEKSClusterPolicy",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonEKSServicePolicy",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ControlPlaneControlPlaneSecurityGroup340B641B": Object {
+      "Properties": Object {
+        "GroupDescription": "EKS Control Plane Security Group",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "SecurityGroupIngress": Array [],
+        "VpcId": Object {
+          "Fn::ImportValue": "GivenStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ControlPlaneControlPlaneSecurityGroupfromTestEksStackControlPlaneWorkerNodesInstanceSecurityGroup731576D944351FE8307": Object {
+      "Properties": Object {
+        "Description": "from TestEksStackControlPlaneWorkerNodesInstanceSecurityGroup731576D9:443",
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneControlPlaneSecurityGroup340B641B",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneWorkerNodesInstanceSecurityGroup7EE098E4",
+            "GroupId",
+          ],
+        },
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ControlPlaneE65BD0FC": Object {
+      "Properties": Object {
+        "ResourcesVpcConfig": Object {
+          "SecurityGroupIds": Array [
+            Object {
+              "Fn::GetAtt": Array [
+                "ControlPlaneControlPlaneSecurityGroup340B641B",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": Array [
+            Object {
+              "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPublicSubnet1Subnet5C2D37C4FFA2B456",
+            },
+            Object {
+              "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPublicSubnet2Subnet691E08A351552740",
+            },
+            Object {
+              "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet1Subnet536B997AFD4CC940",
+            },
+            Object {
+              "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet2Subnet3788AAA1380949A3",
+            },
+          ],
+        },
+        "RoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneClusterRole3ED361B4",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::EKS::Cluster",
+    },
+    "ControlPlaneWorkerNodesASG6A4B2360": Object {
+      "Properties": Object {
+        "DesiredCapacity": "4",
+        "LaunchConfigurationName": Object {
+          "Ref": "ControlPlaneWorkerNodesLaunchConfig0AAF12B5",
+        },
+        "MaxSize": "6",
+        "MinSize": "2",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "PropagateAtLaunch": true,
+            "Value": "TestEksStack/ControlPlane/WorkerNodes",
+          },
+          Object {
+            "Key": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "kubernetes.io/cluster/",
+                  Object {
+                    "Ref": "ControlPlaneE65BD0FC",
+                  },
+                ],
+              ],
+            },
+            "PropagateAtLaunch": true,
+            "Value": "owned",
+          },
+        ],
+        "VPCZoneIdentifier": Array [
+          Object {
+            "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet1Subnet536B997AFD4CC940",
+          },
+          Object {
+            "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet2Subnet3788AAA1380949A3",
+          },
+        ],
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "UpdatePolicy": Object {
+        "AutoScalingRollingUpdate": Object {
+          "PauseTime": "PT0S",
+          "SuspendProcesses": Array [
+            "HealthCheck",
+            "ReplaceUnhealthy",
+            "AZRebalance",
+            "AlarmNotification",
+            "ScheduledActions",
+          ],
+          "WaitOnResourceSignals": false,
+        },
+        "AutoScalingScheduledAction": Object {
+          "IgnoreUnmodifiedGroupSizeProperties": true,
+        },
+      },
+    },
+    "ControlPlaneWorkerNodesInstanceProfile09C4939F": Object {
+      "Properties": Object {
+        "Roles": Array [
+          Object {
+            "Ref": "ControlPlaneWorkerNodesInstanceRole47ADAFAD",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "ControlPlaneWorkerNodesInstanceRole47ADAFAD": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ec2.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonEKSWorkerNodePolicy",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonEKS_CNI_Policy",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonEC2RoleforSSM",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/ElasticLoadBalancingFullAccess",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ControlPlaneWorkerNodesInstanceSecurityGroup7EE098E4": Object {
+      "Properties": Object {
+        "GroupDescription": "TestEksStack/ControlPlane/WorkerNodes/InstanceSecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "SecurityGroupIngress": Array [],
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "TestEksStack/ControlPlane/WorkerNodes",
+          },
+          Object {
+            "Key": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "kubernetes.io/cluster/",
+                  Object {
+                    "Ref": "ControlPlaneE65BD0FC",
+                  },
+                ],
+              ],
+            },
+            "Value": "owned",
+          },
+        ],
+        "VpcId": Object {
+          "Fn::ImportValue": "GivenStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ControlPlaneWorkerNodesInstanceSecurityGroupfromTestEksStackControlPlaneControlPlaneSecurityGroup2536A1CE1025655359ACE0213": Object {
+      "Properties": Object {
+        "Description": "from TestEksStackControlPlaneControlPlaneSecurityGroup2536A1CE:1025-65535",
+        "FromPort": 1025,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneWorkerNodesInstanceSecurityGroup7EE098E4",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneControlPlaneSecurityGroup340B641B",
+            "GroupId",
+          ],
+        },
+        "ToPort": 65535,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ControlPlaneWorkerNodesInstanceSecurityGroupfromTestEksStackControlPlaneControlPlaneSecurityGroup2536A1CE443A720F42C": Object {
+      "Properties": Object {
+        "Description": "from TestEksStackControlPlaneControlPlaneSecurityGroup2536A1CE:443",
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneWorkerNodesInstanceSecurityGroup7EE098E4",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneControlPlaneSecurityGroup340B641B",
+            "GroupId",
+          ],
+        },
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ControlPlaneWorkerNodesInstanceSecurityGroupfromTestEksStackControlPlaneWorkerNodesInstanceSecurityGroup731576D9ALLTRAFFIC17905704": Object {
+      "Properties": Object {
+        "Description": "from TestEksStackControlPlaneWorkerNodesInstanceSecurityGroup731576D9:ALL TRAFFIC",
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneWorkerNodesInstanceSecurityGroup7EE098E4",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ControlPlaneWorkerNodesInstanceSecurityGroup7EE098E4",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ControlPlaneWorkerNodesLaunchConfig0AAF12B5": Object {
+      "DependsOn": Array [
+        "ControlPlaneWorkerNodesInstanceRole47ADAFAD",
+      ],
+      "Properties": Object {
+        "IamInstanceProfile": Object {
+          "Ref": "ControlPlaneWorkerNodesInstanceProfile09C4939F",
+        },
+        "ImageId": "ami-0fde798d17145fae1",
+        "InstanceType": "m5.large",
+        "SecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "ControlPlaneWorkerNodesInstanceSecurityGroup7EE098E4",
+              "GroupId",
+            ],
+          },
+        ],
+        "UserData": Object {
+          "Fn::Base64": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "#!/bin/bash
+set -o xtrace
+/etc/eks/bootstrap.sh ",
+                Object {
+                  "Ref": "ControlPlaneE65BD0FC",
+                },
+                " --use-max-pods 29",
+              ],
+            ],
+          },
+        },
+      },
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+    },
+  },
+}
+`;
