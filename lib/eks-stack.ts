@@ -18,14 +18,14 @@ export class EksStack extends Stack {
   constructor(scope: Construct, id: string, props: EksStackProps) {
     super(scope, id, props);
 
-    this.cluster = new Cluster(this, "ControlPlane", {
+    this.cluster = new Cluster(this, "Eks", {
       vpc: props.vpc
     });
     const asg = this.cluster.addCapacity("WorkerNodes", {
       instanceType: InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
       minCapacity: 2,
       maxCapacity: 6,
-      desiredCapacity: 4
+      desiredCapacity: 2
     });
 
     const managedPolicyNames = [
