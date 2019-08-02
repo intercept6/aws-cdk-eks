@@ -18,6 +18,18 @@ commands:
           key: npm-{{ checksum "package-lock.json" }}-{{ .Environment.CACHE_VERSION_NPM }}
           paths:
             - ~/workspace/node_modules
+  assume_role:
+    steps:
+      - run:
+          name: Assume role
+          command: |
+            sudo apt-get install awscli
+            unset AWS_SESSION_TOKEN
+            echo $ASSUME_ROLE_ARN
+            temp_role=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name $CIRCLE_PROJECT_REPONAME)
+            echo "export AWS_ACCESS_KEY_ID=$(echo $temp_role | jq .Credentials.AccessKeyId | xargs)" >> $BASH_ENV
+            echo "export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)" >> $BASH_ENV
+            echo "export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)" >> $BASH_ENV
   install:
     steps:
       - run:
@@ -73,6 +85,7 @@ jobs:
       - checkout
       - restore_npm
       - install
+      - assume_role
       - diff
   deploy:
     executor:
@@ -81,6 +94,7 @@ jobs:
       - checkout
       - restore_npm
       - install
+      - assume_role
       - deploy
 
 workflows:
