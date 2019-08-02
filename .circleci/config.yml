@@ -74,7 +74,6 @@ commands:
       - run:
           name: Update KubeConfig
           command: |
-            sudo apt-get install awscli
             stack_detail=$(aws cloudformation describe-stacks --stack-name EksStack)
             cluster_name=$(echo ${stack_detail} | jq -r '.Stacks[].Outputs | map(select(.OutputKey == "EksClusterName" ).OutputValue)[]')
             aws eks update-kubeconfig --name ${cluster_name}
