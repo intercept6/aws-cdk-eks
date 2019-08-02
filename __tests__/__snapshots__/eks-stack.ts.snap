@@ -3,9 +3,22 @@
 exports[`eks default 1`] = `
 Object {
   "Outputs": Object {
+    "EksClusterName": Object {
+      "Value": Object {
+        "Ref": "Eks3DB0AF90",
+      },
+    },
     "EksClusterName905628DF": Object {
       "Value": Object {
         "Ref": "Eks3DB0AF90",
+      },
+    },
+    "EksWorkerNodesInstanceRoleARN": Object {
+      "Value": Object {
+        "Fn::GetAtt": Array [
+          "EksWorkerNodesInstanceRoleC3BD263E",
+          "Arn",
+        ],
       },
     },
     "EksWorkerNodesInstanceRoleARNEB8FD811": Object {

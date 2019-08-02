@@ -1,4 +1,4 @@
-import { Construct, Stack, StackProps } from "@aws-cdk/core";
+import { Construct, Stack, StackProps, CfnOutput } from "@aws-cdk/core";
 import { Cluster } from "@aws-cdk/aws-eks";
 import {
   InstanceClass,
@@ -37,5 +37,13 @@ export class EksStack extends Stack {
         ManagedPolicy.fromAwsManagedPolicyName(managedPolicyName)
       );
     }
+
+    // Output
+    new CfnOutput(this, "EksClusterName", {
+      value: this.cluster.clusterName
+    });
+    new CfnOutput(this, "EksWorkerNodesInstanceRoleARN", {
+      value: asg.role.roleArn
+    });
   }
 }
