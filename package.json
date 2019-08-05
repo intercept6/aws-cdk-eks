@@ -64,14 +64,9 @@
     }
   },
   "lint-staged": {
-    "linters": {
-      "*.ts": [
-        "eslint --fix \"./**/*.{ts,json}\"",
-        "git add"
-      ]
-    },
-    "ignore": [
-      "**/__tests__/*.+(ts|tsx|js)"
+    "*.ts": [
+      "eslint --fix \"./**/*.{ts,json}\"",
+      "git add"
     ]
   }
 }
