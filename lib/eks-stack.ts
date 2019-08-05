@@ -30,7 +30,11 @@ export class EksStack extends Stack {
 
     const managedPolicyNames = [
       "service-role/AmazonEC2RoleforSSM",
-      "ElasticLoadBalancingFullAccess"
+      "ElasticLoadBalancingFullAccess",
+      "AmazonEKSWorkerNodePolicy",
+      "AmazonEKS_CNI_Policy",
+      "AmazonEC2ContainerRegistryReadOnly",
+      "AutoScalingFullAccess"
     ];
     for (let managedPolicyName of managedPolicyNames) {
       asg.role.addManagedPolicy(
