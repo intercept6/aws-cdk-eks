@@ -4,6 +4,7 @@ node_modules
 !.eslintrc.js
 .idea/*
 process.yml
+.kube/*
 
 # CDK asset staging directory
 .cdk.staging
