@@ -1,12 +1,16 @@
 version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@0.1.13
+  jq: circleci/jq@1.9.0
+  kubernetes: circleci/kubernetes@0.3.0
+
 executors:
   default:
     working_directory: ~/workspace
     docker:
       - image: circleci/node:10.16.0
     environment:
-      KUBECTL_RELEASE_DATE: "2019-06-11"
-      KUBECTL_VERSION: "1.13.7"
       AWS_DEFAULT_REGION: "ap-northeast-1"
 
 commands:
@@ -27,7 +31,6 @@ commands:
       - run:
           name: Assume role
           command: |
-            sudo apt-get install awscli
             unset AWS_SESSION_TOKEN
             echo ${ASSUME_ROLE_ARN}
             temp_role=$(aws --region ${AWS_DEFAULT_REGION} sts assume-role --role-arn ${ASSUME_ROLE_ARN} --role-session-name $CIRCLE_PROJECT_REPONAME)
@@ -83,12 +86,17 @@ commands:
       - run:
           name: Enable worker nodes to join cluster
           command: |
-            curl -so /usr/local/bin/kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/${KUBECTL_VERSION}/${KUBECTL_RELEASE_DATE}/bin/linux/amd64/kubectl
-            chmod +x /usr/local/bin/kubectl
             stack_detail=$(aws --region ${AWS_DEFAULT_REGION} cloudformation describe-stacks --stack-name EksStack)
             instance_role=$(echo ${stack_detail} | jq -r '.Stacks[].Outputs | map(select(.OutputKey == "EksWorkerNodesInstanceRoleARN" ).OutputValue)[]')
             role="    - username: system:node:{{EC2PrivateDNSName}}\n      rolearn: ${instance_role}\n      groups:\n        - system:bootstrappers\n        - system:nodes"
             cat templates/manifests/aws-auth-cm.yaml |  awk "/mapRoles: \|/{print;print \"${role}\";next}1" | kubectl apply -f -
+  aws_setup:
+    steps:
+      - aws-cli/install
+#      - aws-cli/configure
+  k8s_setup:
+    steps:
+      - kubernetes/install
 
 jobs:
   test:
@@ -117,6 +125,7 @@ jobs:
       - checkout
       - restore_npm
       - install
+      - aws_setup
       - assume_role
       - deploy
   k8s_setup:
@@ -124,6 +133,8 @@ jobs:
       name: default
     steps:
       - checkout
+      - aws_setup
+      - k8s_setup
       - assume_role
       - update_kubeconfig
       - aws_auth
