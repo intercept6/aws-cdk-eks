@@ -116,6 +116,7 @@ jobs:
       - checkout
       - restore_npm
       - install
+      - aws_setup
       - assume_role
       - diff
   deploy:
