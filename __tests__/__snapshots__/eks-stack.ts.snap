@@ -63,6 +63,7 @@ Object {
             "Arn",
           ],
         },
+        "Version": "1.13",
       },
       "Type": "AWS::EKS::Cluster",
     },
@@ -442,7 +443,10 @@ set -o xtrace
                 Object {
                   "Ref": "Eks3DB0AF90",
                 },
-                " --use-max-pods 29",
+                " --use-max-pods 29
+cd /tmp
+yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+systemctl start amazon-ssm-agent",
               ],
             ],
           },

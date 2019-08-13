@@ -19,7 +19,8 @@ export class EksStack extends Stack {
     super(scope, id, props);
 
     this.cluster = new Cluster(this, "Eks", {
-      vpc: props.vpc
+      vpc: props.vpc,
+      version: "1.13"
     });
     const asg = this.cluster.addCapacity("WorkerNodes", {
       instanceType: InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
@@ -27,6 +28,11 @@ export class EksStack extends Stack {
       maxCapacity: 4,
       desiredCapacity: 2
     });
+    asg.addUserData(
+      "cd /tmp\n" +
+        "yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm\n" +
+        "systemctl start amazon-ssm-agent"
+    );
 
     const managedPolicyNames = [
       "service-role/AmazonEC2RoleforSSM",
