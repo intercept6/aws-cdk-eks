@@ -57,6 +57,43 @@ Object {
     },
   },
   "Resources": Object {
+    "AwsAuthmanifest00905E16": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Manifest": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\"},\\"data\\":{\\"mapRoles\\":\\"[{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":role/cm-dai.kurosawa\\\\\\",\\\\\\"username\\\\\\":\\\\\\"dai.kurosawa\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":role/cm-kato.ryo\\\\\\",\\\\\\"username\\\\\\":\\\\\\"kato.ryo\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":role/cm-koji.hamada\\\\\\",\\\\\\"username\\\\\\":\\\\\\"koji.hamada\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":role/cm-jogan.naoki\\\\\\",\\\\\\"username\\\\\\":\\\\\\"jogan.naoki\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]}]\\",\\"mapUsers\\":\\"[]\\",\\"mapAccounts\\":\\"[]\\"}}]",
+            ],
+          ],
+        },
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "EksKubernetesResourceHandlerC6DECF98",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::AWSCDK-EKS-KubernetesResource",
+      "UpdateReplacePolicy": "Delete",
+    },
     "EksAwsAuthmanifest58FEB327": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -720,34 +757,6 @@ systemctl start amazon-ssm-agent",
         ],
       },
       "Type": "AWS::IAM::Role",
-    },
-    "EksmanifestawsauthcmD79F9AF4": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "Manifest": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\"},\\"data\\":{\\"mapRoles\\":\\"- username: system:node:{{EC2PrivateDNSName}}\\\\n  rolearn: ",
-              Object {
-                "Fn::GetAtt": Array [
-                  "EksDefaultCapacityInstanceRole2307F75A",
-                  "Arn",
-                ],
-              },
-              "\\\\n  groups:\\\\n    - system:bootstrappers\\\\n    - system:nodes\\\\n- username: kato.ryo\\\\n  rolearn: arn:aws:iam::206574590278:role/cm-kato.ryo\\\\n  groups:\\\\n    - system:masters\\\\n\\"}}]",
-            ],
-          ],
-        },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "EksKubernetesResourceHandlerC6DECF98",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::AWSCDK-EKS-KubernetesResource",
-      "UpdateReplacePolicy": "Delete",
     },
     "kubectllayer8C2542BCBF2B4DFEB765E181FD30A9A0617C4ADA": Object {
       "Properties": Object {
