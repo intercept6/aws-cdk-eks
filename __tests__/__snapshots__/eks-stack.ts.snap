@@ -24,15 +24,7 @@ Object {
     "EksWorkerNodesInstanceRoleARN": Object {
       "Value": Object {
         "Fn::GetAtt": Array [
-          "EksWorkerNodesInstanceRoleC3BD263E",
-          "Arn",
-        ],
-      },
-    },
-    "EksWorkerNodesInstanceRoleARNEB8FD811": Object {
-      "Value": Object {
-        "Fn::GetAtt": Array [
-          "EksWorkerNodesInstanceRoleC3BD263E",
+          "EksDefaultCapacityInstanceRole2307F75A",
           "Arn",
         ],
       },
@@ -76,13 +68,6 @@ Object {
               Object {
                 "Fn::GetAtt": Array [
                   "EksDefaultCapacityInstanceRole2307F75A",
-                  "Arn",
-                ],
-              },
-              "\\\\\\",\\\\\\"username\\\\\\":\\\\\\"system:node:{{EC2PrivateDNSName}}\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:bootstrappers\\\\\\",\\\\\\"system:nodes\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "EksWorkerNodesInstanceRoleC3BD263E",
                   "Arn",
                 ],
               },
@@ -237,27 +222,6 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "EksControlPlaneSecurityGroupfromTestEksStackEksWorkerNodesInstanceSecurityGroup05202DD0443BE526F3A": Object {
-      "Properties": Object {
-        "Description": "from TestEksStackEksWorkerNodesInstanceSecurityGroup05202DD0:443",
-        "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
-            "EksControlPlaneSecurityGroupDC02C823",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
-            "EksWorkerNodesInstanceSecurityGroupD862B838",
-            "GroupId",
-          ],
-        },
-        "ToPort": 443,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
     "EksDefaultCapacityASGDF4BB67B": Object {
       "Properties": Object {
         "DesiredCapacity": "2",
@@ -373,6 +337,42 @@ Object {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonEC2RoleforSSM",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/ElasticLoadBalancingFullAccess",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AutoScalingFullAccess",
               ],
             ],
           },
@@ -507,7 +507,10 @@ set -o xtrace
                 Object {
                   "Ref": "EksBC5472D2",
                 },
-                " --use-max-pods 29",
+                " --use-max-pods 29
+cd /tmp
+yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+systemctl start amazon-ssm-agent",
               ],
             ],
           },
@@ -718,301 +721,33 @@ set -o xtrace
       },
       "Type": "AWS::IAM::Role",
     },
-    "EksWorkerNodesASG6D4F4631": Object {
+    "EksmanifestawsauthcmD79F9AF4": Object {
+      "DeletionPolicy": "Delete",
       "Properties": Object {
-        "DesiredCapacity": "2",
-        "LaunchConfigurationName": Object {
-          "Ref": "EksWorkerNodesLaunchConfig8425AAB8",
-        },
-        "MaxSize": "4",
-        "MinSize": "2",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "PropagateAtLaunch": true,
-            "Value": "TestEksStack/Eks/WorkerNodes",
-          },
-          Object {
-            "Key": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "kubernetes.io/cluster/",
-                  Object {
-                    "Ref": "EksBC5472D2",
-                  },
+        "Manifest": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\"},\\"data\\":{\\"mapRoles\\":\\"- username: system:node:{{EC2PrivateDNSName}}\\\\n  rolearn: ",
+              Object {
+                "Fn::GetAtt": Array [
+                  "EksDefaultCapacityInstanceRole2307F75A",
+                  "Arn",
                 ],
-              ],
-            },
-            "PropagateAtLaunch": true,
-            "Value": "owned",
-          },
-        ],
-        "VPCZoneIdentifier": Array [
-          Object {
-            "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet1Subnet536B997AFD4CC940",
-          },
-          Object {
-            "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet2Subnet3788AAA1380949A3",
-          },
-        ],
-      },
-      "Type": "AWS::AutoScaling::AutoScalingGroup",
-      "UpdatePolicy": Object {
-        "AutoScalingRollingUpdate": Object {
-          "PauseTime": "PT0S",
-          "SuspendProcesses": Array [
-            "HealthCheck",
-            "ReplaceUnhealthy",
-            "AZRebalance",
-            "AlarmNotification",
-            "ScheduledActions",
-          ],
-          "WaitOnResourceSignals": false,
-        },
-        "AutoScalingScheduledAction": Object {
-          "IgnoreUnmodifiedGroupSizeProperties": true,
-        },
-      },
-    },
-    "EksWorkerNodesInstanceProfile53E5B860": Object {
-      "Properties": Object {
-        "Roles": Array [
-          Object {
-            "Ref": "EksWorkerNodesInstanceRoleC3BD263E",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::InstanceProfile",
-    },
-    "EksWorkerNodesInstanceRoleC3BD263E": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "ec2.amazonaws.com",
               },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/AmazonEKSWorkerNodePolicy",
-              ],
+              "\\\\n  groups:\\\\n    - system:bootstrappers\\\\n    - system:nodes\\\\n- username: kato.ryo\\\\n  rolearn: arn:aws:iam::206574590278:role/cm-kato.ryo\\\\n  groups:\\\\n    - system:masters\\\\n\\"}}]",
             ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/AmazonEKS_CNI_Policy",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AmazonEC2RoleforSSM",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/ElasticLoadBalancingFullAccess",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/AutoScalingFullAccess",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "EksWorkerNodesInstanceSecurityGroupD862B838": Object {
-      "Properties": Object {
-        "GroupDescription": "TestEksStack/Eks/WorkerNodes/InstanceSecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "SecurityGroupIngress": Array [],
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "TestEksStack/Eks/WorkerNodes",
-          },
-          Object {
-            "Key": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "kubernetes.io/cluster/",
-                  Object {
-                    "Ref": "EksBC5472D2",
-                  },
-                ],
-              ],
-            },
-            "Value": "owned",
-          },
-        ],
-        "VpcId": Object {
-          "Fn::ImportValue": "GivenStack:ExportsOutputRefVpc8378EB38272D6E3A",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "EksWorkerNodesInstanceSecurityGroupfromTestEksStackEksControlPlaneSecurityGroup4EEBD22B102565535714FBB16": Object {
-      "Properties": Object {
-        "Description": "from TestEksStackEksControlPlaneSecurityGroup4EEBD22B:1025-65535",
-        "FromPort": 1025,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
-            "EksWorkerNodesInstanceSecurityGroupD862B838",
-            "GroupId",
           ],
         },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
+        "ServiceToken": Object {
           "Fn::GetAtt": Array [
-            "EksControlPlaneSecurityGroupDC02C823",
-            "GroupId",
-          ],
-        },
-        "ToPort": 65535,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "EksWorkerNodesInstanceSecurityGroupfromTestEksStackEksControlPlaneSecurityGroup4EEBD22B44374E5F9A4": Object {
-      "Properties": Object {
-        "Description": "from TestEksStackEksControlPlaneSecurityGroup4EEBD22B:443",
-        "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
-            "EksWorkerNodesInstanceSecurityGroupD862B838",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
-            "EksControlPlaneSecurityGroupDC02C823",
-            "GroupId",
-          ],
-        },
-        "ToPort": 443,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "EksWorkerNodesInstanceSecurityGroupfromTestEksStackEksWorkerNodesInstanceSecurityGroup05202DD0ALLTRAFFIC5661E035": Object {
-      "Properties": Object {
-        "Description": "from TestEksStackEksWorkerNodesInstanceSecurityGroup05202DD0:ALL TRAFFIC",
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
-            "EksWorkerNodesInstanceSecurityGroupD862B838",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "-1",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
-            "EksWorkerNodesInstanceSecurityGroupD862B838",
-            "GroupId",
+            "EksKubernetesResourceHandlerC6DECF98",
+            "Arn",
           ],
         },
       },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "EksWorkerNodesLaunchConfig8425AAB8": Object {
-      "DependsOn": Array [
-        "EksWorkerNodesInstanceRoleC3BD263E",
-      ],
-      "Properties": Object {
-        "IamInstanceProfile": Object {
-          "Ref": "EksWorkerNodesInstanceProfile53E5B860",
-        },
-        "ImageId": "ami-0fde798d17145fae1",
-        "InstanceType": "m5.large",
-        "SecurityGroups": Array [
-          Object {
-            "Fn::GetAtt": Array [
-              "EksWorkerNodesInstanceSecurityGroupD862B838",
-              "GroupId",
-            ],
-          },
-        ],
-        "UserData": Object {
-          "Fn::Base64": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "#!/bin/bash
-set -o xtrace
-/etc/eks/bootstrap.sh ",
-                Object {
-                  "Ref": "EksBC5472D2",
-                },
-                " --use-max-pods 29
-cd /tmp
-yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
-systemctl start amazon-ssm-agent",
-              ],
-            ],
-          },
-        },
-      },
-      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Type": "Custom::AWSCDK-EKS-KubernetesResource",
+      "UpdateReplacePolicy": "Delete",
     },
     "kubectllayer8C2542BCBF2B4DFEB765E181FD30A9A0617C4ADA": Object {
       "Properties": Object {

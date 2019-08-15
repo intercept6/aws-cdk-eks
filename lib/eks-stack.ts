@@ -20,37 +20,56 @@ export class EksStack extends Stack {
 
     this.cluster = new Cluster(this, "Eks", {
       vpc: props.vpc,
-      version: "1.13"
+      version: "1.13",
+      kubectlEnabled: true,
+      defaultCapacityInstance: InstanceType.of(
+        InstanceClass.M5,
+        InstanceSize.LARGE
+      )
     });
-    const asg = this.cluster.addCapacity("WorkerNodes", {
-      instanceType: InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
-      minCapacity: 2,
-      maxCapacity: 4,
-      desiredCapacity: 2
-    });
-    asg.addUserData(
+    const a = this.cluster.defaultCapacity!.addUserData(
       "cd /tmp\n" +
         "yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm\n" +
         "systemctl start amazon-ssm-agent"
     );
-
     const managedPolicyNames = [
       "service-role/AmazonEC2RoleforSSM",
       "ElasticLoadBalancingFullAccess",
       "AutoScalingFullAccess"
     ];
     for (let managedPolicyName of managedPolicyNames) {
-      asg.role.addManagedPolicy(
+      this.cluster.defaultCapacity!.role.addManagedPolicy(
         ManagedPolicy.fromAwsManagedPolicyName(managedPolicyName)
       );
     }
+
+    this.cluster.addResource("aws-auth-cm", {
+      apiVersion: "v1",
+      kind: "ConfigMap",
+      metadata: {
+        name: "aws-auth",
+        namespace: "kube-system"
+      },
+      data: {
+        mapRoles:
+          `- username: system:node:{{EC2PrivateDNSName}}\n` +
+          `  rolearn: ${this.cluster.defaultCapacity!.role.roleArn}\n` +
+          `  groups:\n` +
+          `    - system:bootstrappers\n` +
+          `    - system:nodes\n` +
+          `- username: kato.ryo\n` +
+          `  rolearn: arn:aws:iam::206574590278:role/cm-kato.ryo\n` +
+          `  groups:\n` +
+          `    - system:masters\n`
+      }
+    });
 
     // Output
     new CfnOutput(this, "EksClusterName", {
       value: this.cluster.clusterName
     });
     new CfnOutput(this, "EksWorkerNodesInstanceRoleARN", {
-      value: asg.role.roleArn
+      value: this.cluster.defaultCapacity!.role.roleArn
     });
   }
 }
