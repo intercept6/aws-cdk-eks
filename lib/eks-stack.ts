@@ -1,12 +1,12 @@
 import { Construct, Stack, StackProps, CfnOutput } from "@aws-cdk/core";
-import { Cluster } from "@aws-cdk/aws-eks";
+import { Cluster, AwsAuth } from "@aws-cdk/aws-eks";
 import {
   InstanceClass,
   InstanceSize,
   InstanceType,
   IVpc
 } from "@aws-cdk/aws-ec2";
-import { ManagedPolicy } from "@aws-cdk/aws-iam";
+import { ManagedPolicy, Role } from "@aws-cdk/aws-iam";
 
 interface EksStackProps extends StackProps {
   vpc: IVpc;
@@ -27,7 +27,7 @@ export class EksStack extends Stack {
         InstanceSize.LARGE
       )
     });
-    const a = this.cluster.defaultCapacity!.addUserData(
+    this.cluster.defaultCapacity!.addUserData(
       "cd /tmp\n" +
         "yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm\n" +
         "systemctl start amazon-ssm-agent"
@@ -43,26 +43,20 @@ export class EksStack extends Stack {
       );
     }
 
-    this.cluster.addResource("aws-auth-cm", {
-      apiVersion: "v1",
-      kind: "ConfigMap",
-      metadata: {
-        name: "aws-auth",
-        namespace: "kube-system"
-      },
-      data: {
-        mapRoles:
-          `- username: system:node:{{EC2PrivateDNSName}}\n` +
-          `  rolearn: ${this.cluster.defaultCapacity!.role.roleArn}\n` +
-          `  groups:\n` +
-          `    - system:bootstrappers\n` +
-          `    - system:nodes\n` +
-          `- username: kato.ryo\n` +
-          `  rolearn: arn:aws:iam::206574590278:role/cm-kato.ryo\n` +
-          `  groups:\n` +
-          `    - system:masters\n`
-      }
+    const awsAuth = new AwsAuth(this, "AwsAuth", {
+      cluster: this.cluster
     });
+    const users = ["dai.kurosawa", "kato.ryo", "koji.hamada", "jogan.naoki"];
+    for (let i = 0; i < users.length; i++) {
+      awsAuth.addMastersRole(
+        Role.fromRoleArn(
+          this,
+          `${users[i]}`,
+          `arn:aws:iam::${this.account}:role/cm-${users[i]}`
+        ),
+        `${users[i]}`
+      );
+    }
 
     // Output
     new CfnOutput(this, "EksClusterName", {
