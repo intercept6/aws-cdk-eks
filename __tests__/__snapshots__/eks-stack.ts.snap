@@ -5,12 +5,20 @@ Object {
   "Outputs": Object {
     "EksClusterName": Object {
       "Value": Object {
-        "Ref": "Eks3DB0AF90",
+        "Ref": "EksBC5472D2",
       },
     },
     "EksClusterName905628DF": Object {
       "Value": Object {
-        "Ref": "Eks3DB0AF90",
+        "Ref": "EksBC5472D2",
+      },
+    },
+    "EksDefaultCapacityInstanceRoleARN66211973": Object {
+      "Value": Object {
+        "Fn::GetAtt": Array [
+          "EksDefaultCapacityInstanceRole2307F75A",
+          "Arn",
+        ],
       },
     },
     "EksWorkerNodesInstanceRoleARN": Object {
@@ -30,42 +38,113 @@ Object {
       },
     },
   },
+  "Parameters": Object {
+    "EksKubernetesResourceHandlerCodeArtifactHash3B19700E": Object {
+      "Description": "Artifact hash for asset \\"TestEksStack/Eks/KubernetesResourceHandler/Code\\"",
+      "Type": "String",
+    },
+    "EksKubernetesResourceHandlerCodeS3BucketAE913A60": Object {
+      "Description": "S3 bucket for asset \\"TestEksStack/Eks/KubernetesResourceHandler/Code\\"",
+      "Type": "String",
+    },
+    "EksKubernetesResourceHandlerCodeS3VersionKeyDA3C33E2": Object {
+      "Description": "S3 key for asset version \\"TestEksStack/Eks/KubernetesResourceHandler/Code\\"",
+      "Type": "String",
+    },
+    "EksResourceHandlerCodeArtifactHash62300F43": Object {
+      "Description": "Artifact hash for asset \\"TestEksStack/Eks/Resource/ResourceHandler/Code\\"",
+      "Type": "String",
+    },
+    "EksResourceHandlerCodeS3BucketA1E6193F": Object {
+      "Description": "S3 bucket for asset \\"TestEksStack/Eks/Resource/ResourceHandler/Code\\"",
+      "Type": "String",
+    },
+    "EksResourceHandlerCodeS3VersionKey35C2EFAD": Object {
+      "Description": "S3 key for asset version \\"TestEksStack/Eks/Resource/ResourceHandler/Code\\"",
+      "Type": "String",
+    },
+  },
   "Resources": Object {
-    "Eks3DB0AF90": Object {
+    "EksAwsAuthmanifest58FEB327": Object {
+      "DeletionPolicy": "Delete",
       "Properties": Object {
-        "ResourcesVpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "EksControlPlaneSecurityGroupDC02C823",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPublicSubnet1Subnet5C2D37C4FFA2B456",
-            },
-            Object {
-              "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPublicSubnet2Subnet691E08A351552740",
-            },
-            Object {
-              "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet1Subnet536B997AFD4CC940",
-            },
-            Object {
-              "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet2Subnet3788AAA1380949A3",
-            },
+        "Manifest": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\"},\\"data\\":{\\"mapRoles\\":\\"[{\\\\\\"rolearn\\\\\\":\\\\\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "EksDefaultCapacityInstanceRole2307F75A",
+                  "Arn",
+                ],
+              },
+              "\\\\\\",\\\\\\"username\\\\\\":\\\\\\"system:node:{{EC2PrivateDNSName}}\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:bootstrappers\\\\\\",\\\\\\"system:nodes\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "EksWorkerNodesInstanceRoleC3BD263E",
+                  "Arn",
+                ],
+              },
+              "\\\\\\",\\\\\\"username\\\\\\":\\\\\\"system:node:{{EC2PrivateDNSName}}\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:bootstrappers\\\\\\",\\\\\\"system:nodes\\\\\\"]}]\\",\\"mapUsers\\":\\"[]\\",\\"mapAccounts\\":\\"[]\\"}}]",
+            ],
           ],
         },
-        "RoleArn": Object {
+        "ServiceToken": Object {
           "Fn::GetAtt": Array [
-            "EksClusterRole457AF3D0",
+            "EksKubernetesResourceHandlerC6DECF98",
             "Arn",
           ],
         },
-        "Version": "1.13",
       },
-      "Type": "AWS::EKS::Cluster",
+      "Type": "Custom::AWSCDK-EKS-KubernetesResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "EksBC5472D2": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Config": Object {
+          "resourcesVpcConfig": Object {
+            "securityGroupIds": Array [
+              Object {
+                "Fn::GetAtt": Array [
+                  "EksControlPlaneSecurityGroupDC02C823",
+                  "GroupId",
+                ],
+              },
+            ],
+            "subnetIds": Array [
+              Object {
+                "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPublicSubnet1Subnet5C2D37C4FFA2B456",
+              },
+              Object {
+                "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPublicSubnet2Subnet691E08A351552740",
+              },
+              Object {
+                "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet1Subnet536B997AFD4CC940",
+              },
+              Object {
+                "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet2Subnet3788AAA1380949A3",
+              },
+            ],
+          },
+          "roleArn": Object {
+            "Fn::GetAtt": Array [
+              "EksClusterRole457AF3D0",
+              "Arn",
+            ],
+          },
+          "version": "1.13",
+        },
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "EksResourceHandler52D8126A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::AWSCDK-EKS-Cluster",
+      "UpdateReplacePolicy": "Delete",
     },
     "EksClusterRole457AF3D0": Object {
       "Properties": Object {
@@ -137,6 +216,27 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
+    "EksControlPlaneSecurityGroupfromTestEksStackEksDefaultCapacityInstanceSecurityGroup0E5504C844343B3AE5C": Object {
+      "Properties": Object {
+        "Description": "from TestEksStackEksDefaultCapacityInstanceSecurityGroup0E5504C8:443",
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EksControlPlaneSecurityGroupDC02C823",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EksDefaultCapacityInstanceSecurityGroup0B08A329",
+            "GroupId",
+          ],
+        },
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
     "EksControlPlaneSecurityGroupfromTestEksStackEksWorkerNodesInstanceSecurityGroup05202DD0443BE526F3A": Object {
       "Properties": Object {
         "Description": "from TestEksStackEksWorkerNodesInstanceSecurityGroup05202DD0:443",
@@ -157,6 +257,466 @@ Object {
         "ToPort": 443,
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "EksDefaultCapacityASGDF4BB67B": Object {
+      "Properties": Object {
+        "DesiredCapacity": "2",
+        "LaunchConfigurationName": Object {
+          "Ref": "EksDefaultCapacityLaunchConfigD448D3B6",
+        },
+        "MaxSize": "2",
+        "MinSize": "1",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "PropagateAtLaunch": true,
+            "Value": "TestEksStack/Eks/DefaultCapacity",
+          },
+          Object {
+            "Key": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "kubernetes.io/cluster/",
+                  Object {
+                    "Ref": "EksBC5472D2",
+                  },
+                ],
+              ],
+            },
+            "PropagateAtLaunch": true,
+            "Value": "owned",
+          },
+        ],
+        "VPCZoneIdentifier": Array [
+          Object {
+            "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet1Subnet536B997AFD4CC940",
+          },
+          Object {
+            "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet2Subnet3788AAA1380949A3",
+          },
+        ],
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "UpdatePolicy": Object {
+        "AutoScalingRollingUpdate": Object {
+          "PauseTime": "PT0S",
+          "SuspendProcesses": Array [
+            "HealthCheck",
+            "ReplaceUnhealthy",
+            "AZRebalance",
+            "AlarmNotification",
+            "ScheduledActions",
+          ],
+          "WaitOnResourceSignals": false,
+        },
+        "AutoScalingScheduledAction": Object {
+          "IgnoreUnmodifiedGroupSizeProperties": true,
+        },
+      },
+    },
+    "EksDefaultCapacityInstanceProfileFD992D93": Object {
+      "Properties": Object {
+        "Roles": Array [
+          Object {
+            "Ref": "EksDefaultCapacityInstanceRole2307F75A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "EksDefaultCapacityInstanceRole2307F75A": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ec2.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonEKSWorkerNodePolicy",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonEKS_CNI_Policy",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EksDefaultCapacityInstanceSecurityGroup0B08A329": Object {
+      "Properties": Object {
+        "GroupDescription": "TestEksStack/Eks/DefaultCapacity/InstanceSecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "SecurityGroupIngress": Array [],
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "TestEksStack/Eks/DefaultCapacity",
+          },
+          Object {
+            "Key": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "kubernetes.io/cluster/",
+                  Object {
+                    "Ref": "EksBC5472D2",
+                  },
+                ],
+              ],
+            },
+            "Value": "owned",
+          },
+        ],
+        "VpcId": Object {
+          "Fn::ImportValue": "GivenStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "EksDefaultCapacityInstanceSecurityGroupfromTestEksStackEksControlPlaneSecurityGroup4EEBD22B102565535C94BE664": Object {
+      "Properties": Object {
+        "Description": "from TestEksStackEksControlPlaneSecurityGroup4EEBD22B:1025-65535",
+        "FromPort": 1025,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EksDefaultCapacityInstanceSecurityGroup0B08A329",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EksControlPlaneSecurityGroupDC02C823",
+            "GroupId",
+          ],
+        },
+        "ToPort": 65535,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "EksDefaultCapacityInstanceSecurityGroupfromTestEksStackEksControlPlaneSecurityGroup4EEBD22B44319E3E613": Object {
+      "Properties": Object {
+        "Description": "from TestEksStackEksControlPlaneSecurityGroup4EEBD22B:443",
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EksDefaultCapacityInstanceSecurityGroup0B08A329",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EksControlPlaneSecurityGroupDC02C823",
+            "GroupId",
+          ],
+        },
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "EksDefaultCapacityInstanceSecurityGroupfromTestEksStackEksDefaultCapacityInstanceSecurityGroup0E5504C8ALLTRAFFIC32304A16": Object {
+      "Properties": Object {
+        "Description": "from TestEksStackEksDefaultCapacityInstanceSecurityGroup0E5504C8:ALL TRAFFIC",
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EksDefaultCapacityInstanceSecurityGroup0B08A329",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EksDefaultCapacityInstanceSecurityGroup0B08A329",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "EksDefaultCapacityLaunchConfigD448D3B6": Object {
+      "DependsOn": Array [
+        "EksDefaultCapacityInstanceRole2307F75A",
+      ],
+      "Properties": Object {
+        "IamInstanceProfile": Object {
+          "Ref": "EksDefaultCapacityInstanceProfileFD992D93",
+        },
+        "ImageId": "ami-0fde798d17145fae1",
+        "InstanceType": "m5.large",
+        "SecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "EksDefaultCapacityInstanceSecurityGroup0B08A329",
+              "GroupId",
+            ],
+          },
+        ],
+        "UserData": Object {
+          "Fn::Base64": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "#!/bin/bash
+set -o xtrace
+/etc/eks/bootstrap.sh ",
+                Object {
+                  "Ref": "EksBC5472D2",
+                },
+                " --use-max-pods 29",
+              ],
+            ],
+          },
+        },
+      },
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+    },
+    "EksKubernetesResourceHandlerC6DECF98": Object {
+      "DependsOn": Array [
+        "EksResourceHandlerServiceRoleDefaultPolicy1DD30BCA",
+        "EksResourceHandlerServiceRoleFCA67B0F",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "EksKubernetesResourceHandlerCodeS3BucketAE913A60",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "EksKubernetesResourceHandlerCodeS3VersionKeyDA3C33E2",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "EksKubernetesResourceHandlerCodeS3VersionKeyDA3C33E2",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "CLUSTER_NAME": Object {
+              "Ref": "EksBC5472D2",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "kubectllayer8C2542BCBF2B4DFEB765E181FD30A9A0617C4ADA",
+              "Outputs.LayerVersionArn",
+            ],
+          },
+        ],
+        "MemorySize": 256,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "EksResourceHandlerServiceRoleFCA67B0F",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.7",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "EksResourceHandler52D8126A": Object {
+      "DependsOn": Array [
+        "EksResourceHandlerServiceRoleDefaultPolicy1DD30BCA",
+        "EksResourceHandlerServiceRoleFCA67B0F",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "EksResourceHandlerCodeS3BucketA1E6193F",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "EksResourceHandlerCodeS3VersionKey35C2EFAD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "EksResourceHandlerCodeS3VersionKey35C2EFAD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "kubectllayer8C2542BCBF2B4DFEB765E181FD30A9A0617C4ADA",
+              "Outputs.LayerVersionArn",
+            ],
+          },
+        ],
+        "MemorySize": 512,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "EksResourceHandlerServiceRoleFCA67B0F",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.7",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "EksResourceHandlerServiceRoleDefaultPolicy1DD30BCA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "eks:CreateCluster",
+                "eks:DescribeCluster",
+                "eks:DeleteCluster",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "iam:PassRole",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "EksClusterRole457AF3D0",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "EksResourceHandlerServiceRoleDefaultPolicy1DD30BCA",
+        "Roles": Array [
+          Object {
+            "Ref": "EksResourceHandlerServiceRoleFCA67B0F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "EksResourceHandlerServiceRoleFCA67B0F": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
     },
     "EksWorkerNodesASG6D4F4631": Object {
       "Properties": Object {
@@ -179,7 +739,7 @@ Object {
                 Array [
                   "kubernetes.io/cluster/",
                   Object {
-                    "Ref": "Eks3DB0AF90",
+                    "Ref": "EksBC5472D2",
                   },
                 ],
               ],
@@ -339,7 +899,7 @@ Object {
                 Array [
                   "kubernetes.io/cluster/",
                   Object {
-                    "Ref": "Eks3DB0AF90",
+                    "Ref": "EksBC5472D2",
                   },
                 ],
               ],
@@ -441,7 +1001,7 @@ Object {
 set -o xtrace
 /etc/eks/bootstrap.sh ",
                 Object {
-                  "Ref": "Eks3DB0AF90",
+                  "Ref": "EksBC5472D2",
                 },
                 " --use-max-pods 29
 cd /tmp
@@ -454,6 +1014,19 @@ systemctl start amazon-ssm-agent",
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
+    "kubectllayer8C2542BCBF2B4DFEB765E181FD30A9A0617C4ADA": Object {
+      "Properties": Object {
+        "Location": Object {
+          "ApplicationId": "arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-kubectl",
+          "SemanticVersion": "1.13.7",
+        },
+        "Parameters": Object {
+          "LayerName": "kubectl-bbc720e9b4a401268f8909c0b9581b29",
+        },
+      },
+      "Type": "AWS::Serverless::Application",
+    },
   },
+  "Transform": "AWS::Serverless-2016-10-31",
 }
 `;
