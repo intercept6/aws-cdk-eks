@@ -21,14 +21,6 @@ Object {
         ],
       },
     },
-    "EksWorkerNodesInstanceRoleARN": Object {
-      "Value": Object {
-        "Fn::GetAtt": Array [
-          "EksDefaultCapacityInstanceRole2307F75A",
-          "Arn",
-        ],
-      },
-    },
   },
   "Parameters": Object {
     "EksKubernetesResourceHandlerCodeArtifactHash3B19700E": Object {
@@ -64,7 +56,14 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\"},\\"data\\":{\\"mapRoles\\":\\"[{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
+              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\"},\\"data\\":{\\"mapRoles\\":\\"[{\\\\\\"rolearn\\\\\\":\\\\\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "EksDefaultCapacityInstanceRole2307F75A",
+                  "Arn",
+                ],
+              },
+              "\\\\\\",\\\\\\"username\\\\\\":\\\\\\"system:node:{{EC2PrivateDNSName}}\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:bootstrappers\\\\\\",\\\\\\"system:nodes\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
               Object {
                 "Ref": "AWS::AccountId",
               },
@@ -81,34 +80,6 @@ Object {
                 "Ref": "AWS::AccountId",
               },
               ":role/cm-jogan.naoki\\\\\\",\\\\\\"username\\\\\\":\\\\\\"jogan.naoki\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]}]\\",\\"mapUsers\\":\\"[]\\",\\"mapAccounts\\":\\"[]\\"}}]",
-            ],
-          ],
-        },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "EksKubernetesResourceHandlerC6DECF98",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::AWSCDK-EKS-KubernetesResource",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "EksAwsAuthmanifest58FEB327": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "Manifest": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "[{\\"apiVersion\\":\\"v1\\",\\"kind\\":\\"ConfigMap\\",\\"metadata\\":{\\"name\\":\\"aws-auth\\",\\"namespace\\":\\"kube-system\\"},\\"data\\":{\\"mapRoles\\":\\"[{\\\\\\"rolearn\\\\\\":\\\\\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "EksDefaultCapacityInstanceRole2307F75A",
-                  "Arn",
-                ],
-              },
-              "\\\\\\",\\\\\\"username\\\\\\":\\\\\\"system:node:{{EC2PrivateDNSName}}\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:bootstrappers\\\\\\",\\\\\\"system:nodes\\\\\\"]}]\\",\\"mapUsers\\":\\"[]\\",\\"mapAccounts\\":\\"[]\\"}}]",
             ],
           ],
         },

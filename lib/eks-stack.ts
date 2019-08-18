@@ -17,17 +17,19 @@ export class EksStack extends Stack {
 
   constructor(scope: Construct, id: string, props: EksStackProps) {
     super(scope, id, props);
-
     this.cluster = new Cluster(this, "Eks", {
       vpc: props.vpc,
       version: "1.13",
-      kubectlEnabled: true,
-      defaultCapacityInstance: InstanceType.of(
-        InstanceClass.M5,
-        InstanceSize.LARGE
-      )
+      defaultCapacity: 0
     });
-    this.cluster.defaultCapacity!.addUserData(
+
+    // default worker nodes setting
+    const asg = this.cluster.addCapacity("DefaultCapacity", {
+      desiredCapacity: 2,
+      instanceType: InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
+      mapRole: false
+    });
+    asg.addUserData(
       "cd /tmp\n" +
         "yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm\n" +
         "systemctl start amazon-ssm-agent"
@@ -38,13 +40,18 @@ export class EksStack extends Stack {
       "AutoScalingFullAccess"
     ];
     for (let managedPolicyName of managedPolicyNames) {
-      this.cluster.defaultCapacity!.role.addManagedPolicy(
+      asg.role.addManagedPolicy(
         ManagedPolicy.fromAwsManagedPolicyName(managedPolicyName)
       );
     }
 
+    // aws-auth settings
     const awsAuth = new AwsAuth(this, "AwsAuth", {
       cluster: this.cluster
+    });
+    awsAuth.addRoleMapping(asg.role, {
+      groups: ["system:bootstrappers", "system:nodes"],
+      username: "system:node:{{EC2PrivateDNSName}}"
     });
     const users = ["dai.kurosawa", "kato.ryo", "koji.hamada", "jogan.naoki"];
     for (let i = 0; i < users.length; i++) {
@@ -61,9 +68,6 @@ export class EksStack extends Stack {
     // Output
     new CfnOutput(this, "EksClusterName", {
       value: this.cluster.clusterName
-    });
-    new CfnOutput(this, "EksWorkerNodesInstanceRoleARN", {
-      value: this.cluster.defaultCapacity!.role.roleArn
     });
   }
 }

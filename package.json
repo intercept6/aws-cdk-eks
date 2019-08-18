@@ -10,9 +10,12 @@
     "format": "eslint --fix \"./**/*.{ts,json}\"",
     "cdk": "cdk",
     "diff": "cdk diff",
+    "deploy": "tsc && cdk deploy *Stack --require-approval never",
+    "synth": "tsc && cdk synth",
     "ci_diff": "cdk diff 2>&1 | sed -r \"s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})*)?m//g\" || true",
     "ci_deploy": "cdk deploy *Stack --require-approval never",
-    "test": "jest"
+    "test": "jest",
+    "test_update": "jest --updateSnapshot"
   },
   "pre-commit": [
     "test"
