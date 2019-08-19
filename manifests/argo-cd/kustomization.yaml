@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+  - cluster-install/
+  # Ingress のドメインを Route 53 に登録するための external-dns
+  - ../../external-dns/Kustomization
+  # Argo CD にアクセスするための Ingress として ALB を使用するので aws-alb-ingress-controller
+  - ../../aws-alb-ingress-controller/Kustomization
