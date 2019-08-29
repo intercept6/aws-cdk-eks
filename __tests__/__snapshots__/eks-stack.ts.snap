@@ -8,9 +8,17 @@ Object {
         "Ref": "EksBC5472D2",
       },
     },
-    "EksClusterName905628DF": Object {
+    "EksConfigCommandDB96978F": Object {
       "Value": Object {
-        "Ref": "EksBC5472D2",
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws eks update-kubeconfig --name ",
+            Object {
+              "Ref": "EksBC5472D2",
+            },
+          ],
+        ],
       },
     },
     "EksDefaultCapacityInstanceRoleARN66211973": Object {
@@ -147,17 +155,7 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "eks.",
-                      Object {
-                        "Ref": "AWS::URLSuffix",
-                      },
-                    ],
-                  ],
-                },
+                "Service": "eks.amazonaws.com",
               },
             },
           ],
@@ -202,7 +200,6 @@ Object {
             "IpProtocol": "-1",
           },
         ],
-        "SecurityGroupIngress": Array [],
         "VpcId": Object {
           "Fn::ImportValue": "GivenStack:ExportsOutputRefVpc8378EB38272D6E3A",
         },
@@ -398,7 +395,6 @@ Object {
             "IpProtocol": "-1",
           },
         ],
-        "SecurityGroupIngress": Array [],
         "Tags": Array [
           Object {
             "Key": "Name",
@@ -494,7 +490,7 @@ Object {
         "IamInstanceProfile": Object {
           "Ref": "EksDefaultCapacityInstanceProfileFD992D93",
         },
-        "ImageId": "ami-0fde798d17145fae1",
+        "ImageId": "ami-0a67c71d2ab43d36f",
         "InstanceType": "m5.large",
         "SecurityGroups": Array [
           Object {
