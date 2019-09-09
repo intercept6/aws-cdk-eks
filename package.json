@@ -40,6 +40,7 @@
     "typescript": "3.5.3"
   },
   "dependencies": {
+    "@aws-cdk/aws-certificatemanager": "1.7.0",
     "@aws-cdk/aws-ec2": "1.4.0",
     "@aws-cdk/aws-eks": "1.4.0",
     "@aws-cdk/core": "1.4.0",
@@ -60,16 +61,5 @@
       "**/__tests__/*.+(ts|tsx|js)"
     ],
     "preset": "ts-jest"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.ts": [
-      "eslint --fix \"./**/*.{ts,json}\"",
-      "git add"
-    ]
   }
 }

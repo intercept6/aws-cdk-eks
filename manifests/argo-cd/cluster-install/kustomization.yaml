@@ -4,8 +4,7 @@ bases:
   - github.com/argoproj/argo-cd/manifests/ha/cluster-install?ref=v1.1.2
 resources:
   - ingress/ingress.yaml
-  - secret/argocd-secret.yaml
-  - secret/repo-metropolis-kubernetes.yaml
+  - secret/argocd-secret.decrypted.yaml
 patchesStrategicMerge:
   - configmap/argocd-cm.yaml
   - deployment/deployment.yaml

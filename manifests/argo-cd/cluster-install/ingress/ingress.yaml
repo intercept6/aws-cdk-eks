@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: argocd-server-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+#    alb.ingress.kubernetes.io/subnets: subnet-baacadcc, subnet-99edabc1, subnet-07b9e3e5d82d62b87
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-1:206574590278:certificate/ab0ac7a9-9b93-4f5f-8904-fc86bcc06906
+  labels:
+    app: argocd-server-ingress
+  namespace: argocd
+spec:
+  rules:
+    - host: argocd.eks-mokumoku.rkato.classmethod.info
+      http:
+        paths:
+          - backend:
+              serviceName: argocd-server
+              servicePort: 80
