@@ -152,8 +152,9 @@ Object {
     "CertificateCertificateRequestorResource2890C6B7": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
-        "DomainName": "example.com",
+        "DomainName": "*.example.com",
         "HostedZoneId": "DUMMY",
+        "Region": "ap-northeast-1",
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CertificateCertificateRequestorFunction5E845413",
@@ -161,7 +162,7 @@ Object {
           ],
         },
         "SubjectAlternativeNames": Array [
-          "*.example.com",
+          "example.com",
         ],
       },
       "Type": "AWS::CloudFormation::CustomResource",
