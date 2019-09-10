@@ -7,7 +7,8 @@ process.yml
 .kube/*
 
 # k8s
-*.decrypted.*
+*.decrypted.yaml
+*.decrypted.yml
 
 # CDK asset staging directory
 .cdk.staging

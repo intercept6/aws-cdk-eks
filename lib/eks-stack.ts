@@ -1,12 +1,8 @@
-import { Construct, Stack, StackProps, CfnOutput } from "@aws-cdk/core";
-import { Cluster, AwsAuth } from "@aws-cdk/aws-eks";
-import {
-  InstanceClass,
-  InstanceSize,
-  InstanceType,
-  IVpc
-} from "@aws-cdk/aws-ec2";
-import { ManagedPolicy, Role } from "@aws-cdk/aws-iam";
+import {CfnOutput, Construct, Stack, StackProps} from "@aws-cdk/core";
+import {AwsAuth, Cluster} from "@aws-cdk/aws-eks";
+import {InstanceClass, InstanceSize, InstanceType, IVpc} from "@aws-cdk/aws-ec2";
+import {Effect, ManagedPolicy, PolicyStatement, Role, Policy} from "@aws-cdk/aws-iam";
+import {Context} from "./context";
 
 interface EksStackProps extends StackProps {
   vpc: IVpc;
@@ -17,6 +13,9 @@ export class EksStack extends Stack {
 
   constructor(scope: Construct, id: string, props: EksStackProps) {
     super(scope, id, props);
+    const stage: string = this.node.tryGetContext("stage");
+    const params: Context = this.node.tryGetContext(stage);
+
     this.cluster = new Cluster(this, "Eks", {
       vpc: props.vpc,
       version: "1.13",
@@ -40,125 +39,127 @@ export class EksStack extends Stack {
       "AutoScalingFullAccess",
       "AdministratorAccess"
     ];
-    // TODO: 権限最小化
-    //{
-    //   "Version": "2012-10-17",
-    //   "Statement": [
-    //     {
-    //       "Effect": "Allow",
-    //       "Action": [
-    //         "acm:DescribeCertificate",
-    //         "acm:ListCertificates",
-    //         "acm:GetCertificate"
-    //       ],
-    //       "Resource": "*"
-    //     },
-    //     {
-    //       "Effect": "Allow",
-    //       "Action": [
-    //         "ec2:AuthorizeSecurityGroupIngress",
-    //         "ec2:CreateSecurityGroup",
-    //         "ec2:CreateTags",
-    //         "ec2:DeleteTags",
-    //         "ec2:DeleteSecurityGroup",
-    //         "ec2:DescribeAccountAttributes",
-    //         "ec2:DescribeAddresses",
-    //         "ec2:DescribeInstances",
-    //         "ec2:DescribeInstanceStatus",
-    //         "ec2:DescribeInternetGateways",
-    //         "ec2:DescribeNetworkInterfaces",
-    //         "ec2:DescribeSecurityGroups",
-    //         "ec2:DescribeSubnets",
-    //         "ec2:DescribeTags",
-    //         "ec2:DescribeVpcs",
-    //         "ec2:ModifyInstanceAttribute",
-    //         "ec2:ModifyNetworkInterfaceAttribute",
-    //         "ec2:RevokeSecurityGroupIngress"
-    //       ],
-    //       "Resource": "*"
-    //     },
-    //     {
-    //       "Effect": "Allow",
-    //       "Action": [
-    //         "elasticloadbalancing:AddListenerCertificates",
-    //         "elasticloadbalancing:AddTags",
-    //         "elasticloadbalancing:CreateListener",
-    //         "elasticloadbalancing:CreateLoadBalancer",
-    //         "elasticloadbalancing:CreateRule",
-    //         "elasticloadbalancing:CreateTargetGroup",
-    //         "elasticloadbalancing:DeleteListener",
-    //         "elasticloadbalancing:DeleteLoadBalancer",
-    //         "elasticloadbalancing:DeleteRule",
-    //         "elasticloadbalancing:DeleteTargetGroup",
-    //         "elasticloadbalancing:DeregisterTargets",
-    //         "elasticloadbalancing:DescribeListenerCertificates",
-    //         "elasticloadbalancing:DescribeListeners",
-    //         "elasticloadbalancing:DescribeLoadBalancers",
-    //         "elasticloadbalancing:DescribeLoadBalancerAttributes",
-    //         "elasticloadbalancing:DescribeRules",
-    //         "elasticloadbalancing:DescribeSSLPolicies",
-    //         "elasticloadbalancing:DescribeTags",
-    //         "elasticloadbalancing:DescribeTargetGroups",
-    //         "elasticloadbalancing:DescribeTargetGroupAttributes",
-    //         "elasticloadbalancing:DescribeTargetHealth",
-    //         "elasticloadbalancing:ModifyListener",
-    //         "elasticloadbalancing:ModifyLoadBalancerAttributes",
-    //         "elasticloadbalancing:ModifyRule",
-    //         "elasticloadbalancing:ModifyTargetGroup",
-    //         "elasticloadbalancing:ModifyTargetGroupAttributes",
-    //         "elasticloadbalancing:RegisterTargets",
-    //         "elasticloadbalancing:RemoveListenerCertificates",
-    //         "elasticloadbalancing:RemoveTags",
-    //         "elasticloadbalancing:SetIpAddressType",
-    //         "elasticloadbalancing:SetSecurityGroups",
-    //         "elasticloadbalancing:SetSubnets",
-    //         "elasticloadbalancing:SetWebACL"
-    //       ],
-    //       "Resource": "*"
-    //     },
-    //     {
-    //       "Effect": "Allow",
-    //       "Action": [
-    //         "iam:CreateServiceLinkedRole",
-    //         "iam:GetServerCertificate",
-    //         "iam:ListServerCertificates"
-    //       ],
-    //       "Resource": "*"
-    //     },
-    //     {
-    //       "Effect": "Allow",
-    //       "Action": [
-    //         "cognito-idp:DescribeUserPoolClient"
-    //       ],
-    //       "Resource": "*"
-    //     },
-    //     {
-    //       "Effect": "Allow",
-    //       "Action": [
-    //         "waf-regional:GetWebACLForResource",
-    //         "waf-regional:GetWebACL",
-    //         "waf-regional:AssociateWebACL",
-    //         "waf-regional:DisassociateWebACL"
-    //       ],
-    //       "Resource": "*"
-    //     },
-    //     {
-    //       "Effect": "Allow",
-    //       "Action": [
-    //         "tag:GetResources",
-    //         "tag:TagResources"
-    //       ],
-    //       "Resource": "*"
-    //     },
-    //     {
-    //       "Effect": "Allow",
-    //       "Action": [
-    //         "waf:GetWebACL"
-    //       ],
-    //       "Resource": "*"
-    //     }
-    //   ]
-    // }
+
+    const albIngressPolicies: PolicyStatement[] = [
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          "acm:DescribeCertificate",
+          "acm:ListCertificates",
+          "acm:GetCertificate"
+        ],
+        resources: ["*"],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:CreateSecurityGroup",
+          "ec2:CreateTags",
+          "ec2:DeleteTags",
+          "ec2:DeleteSecurityGroup",
+          "ec2:DescribeAccountAttributes",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeInstances",
+          "ec2:DescribeInstanceStatus",
+          "ec2:DescribeInternetGateways",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeTags",
+          "ec2:DescribeVpcs",
+          "ec2:ModifyInstanceAttribute",
+          "ec2:ModifyNetworkInterfaceAttribute",
+          "ec2:RevokeSecurityGroupIngress"
+        ],
+        resources: ["*"],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          "elasticloadbalancing:AddListenerCertificates",
+          "elasticloadbalancing:AddTags",
+          "elasticloadbalancing:CreateListener",
+          "elasticloadbalancing:CreateLoadBalancer",
+          "elasticloadbalancing:CreateRule",
+          "elasticloadbalancing:CreateTargetGroup",
+          "elasticloadbalancing:DeleteListener",
+          "elasticloadbalancing:DeleteLoadBalancer",
+          "elasticloadbalancing:DeleteRule",
+          "elasticloadbalancing:DeleteTargetGroup",
+          "elasticloadbalancing:DeregisterTargets",
+          "elasticloadbalancing:DescribeListenerCertificates",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "elasticloadbalancing:DescribeRules",
+          "elasticloadbalancing:DescribeSSLPolicies",
+          "elasticloadbalancing:DescribeTags",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetGroupAttributes",
+          "elasticloadbalancing:DescribeTargetHealth",
+          "elasticloadbalancing:ModifyListener",
+          "elasticloadbalancing:ModifyLoadBalancerAttributes",
+          "elasticloadbalancing:ModifyRule",
+          "elasticloadbalancing:ModifyTargetGroup",
+          "elasticloadbalancing:ModifyTargetGroupAttributes",
+          "elasticloadbalancing:RegisterTargets",
+          "elasticloadbalancing:RemoveListenerCertificates",
+          "elasticloadbalancing:RemoveTags",
+          "elasticloadbalancing:SetIpAddressType",
+          "elasticloadbalancing:SetSecurityGroups",
+          "elasticloadbalancing:SetSubnets",
+          "elasticloadbalancing:SetWebACL"
+        ],
+        resources: ["*"],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          "iam:CreateServiceLinkedRole",
+          "iam:GetServerCertificate",
+          "iam:ListServerCertificates"
+        ],
+        resources: ["*"],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          "cognito-idp:DescribeUserPoolClient"
+        ],
+        resources: ["*"],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          "waf-regional:GetWebACLForResource",
+          "waf-regional:GetWebACL",
+          "waf-regional:AssociateWebACL",
+          "waf-regional:DisassociateWebACL"
+        ],
+        resources: ["*"],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          "tag:GetResources",
+          "tag:TagResources"
+        ],
+        resources: ["*"],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          "waf:GetWebACL"
+        ],
+        resources: ["*"],
+      }),
+    ];
+    new Policy(this, "AlbIngressPolicy", {
+      roles: [asg.role],
+      statements: albIngressPolicies
+    });
+
     for (let managedPolicyName of managedPolicyNames) {
       asg.role.addManagedPolicy(
         ManagedPolicy.fromAwsManagedPolicyName(managedPolicyName)

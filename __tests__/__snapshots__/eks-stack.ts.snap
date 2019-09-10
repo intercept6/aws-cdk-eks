@@ -8,9 +8,17 @@ Object {
         "Ref": "EksBC5472D2",
       },
     },
-    "EksClusterName905628DF": Object {
+    "EksConfigCommandDB96978F": Object {
       "Value": Object {
-        "Ref": "EksBC5472D2",
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws eks update-kubeconfig --name ",
+            Object {
+              "Ref": "EksBC5472D2",
+            },
+          ],
+        ],
       },
     },
     "EksDefaultCapacityInstanceRoleARN66211973": Object {
@@ -49,6 +57,131 @@ Object {
     },
   },
   "Resources": Object {
+    "AlbIngressPolicy9773036A": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "acm:DescribeCertificate",
+                "acm:ListCertificates",
+                "acm:GetCertificate",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:CreateSecurityGroup",
+                "ec2:CreateTags",
+                "ec2:DeleteTags",
+                "ec2:DeleteSecurityGroup",
+                "ec2:DescribeAccountAttributes",
+                "ec2:DescribeAddresses",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus",
+                "ec2:DescribeInternetGateways",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeTags",
+                "ec2:DescribeVpcs",
+                "ec2:ModifyInstanceAttribute",
+                "ec2:ModifyNetworkInterfaceAttribute",
+                "ec2:RevokeSecurityGroupIngress",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "elasticloadbalancing:AddListenerCertificates",
+                "elasticloadbalancing:AddTags",
+                "elasticloadbalancing:CreateListener",
+                "elasticloadbalancing:CreateLoadBalancer",
+                "elasticloadbalancing:CreateRule",
+                "elasticloadbalancing:CreateTargetGroup",
+                "elasticloadbalancing:DeleteListener",
+                "elasticloadbalancing:DeleteLoadBalancer",
+                "elasticloadbalancing:DeleteRule",
+                "elasticloadbalancing:DeleteTargetGroup",
+                "elasticloadbalancing:DeregisterTargets",
+                "elasticloadbalancing:DescribeListenerCertificates",
+                "elasticloadbalancing:DescribeListeners",
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticloadbalancing:DescribeLoadBalancerAttributes",
+                "elasticloadbalancing:DescribeRules",
+                "elasticloadbalancing:DescribeSSLPolicies",
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeTargetGroupAttributes",
+                "elasticloadbalancing:DescribeTargetHealth",
+                "elasticloadbalancing:ModifyListener",
+                "elasticloadbalancing:ModifyLoadBalancerAttributes",
+                "elasticloadbalancing:ModifyRule",
+                "elasticloadbalancing:ModifyTargetGroup",
+                "elasticloadbalancing:ModifyTargetGroupAttributes",
+                "elasticloadbalancing:RegisterTargets",
+                "elasticloadbalancing:RemoveListenerCertificates",
+                "elasticloadbalancing:RemoveTags",
+                "elasticloadbalancing:SetIpAddressType",
+                "elasticloadbalancing:SetSecurityGroups",
+                "elasticloadbalancing:SetSubnets",
+                "elasticloadbalancing:SetWebACL",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "iam:CreateServiceLinkedRole",
+                "iam:GetServerCertificate",
+                "iam:ListServerCertificates",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "cognito-idp:DescribeUserPoolClient",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "waf-regional:GetWebACLForResource",
+                "waf-regional:GetWebACL",
+                "waf-regional:AssociateWebACL",
+                "waf-regional:DisassociateWebACL",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "tag:GetResources",
+                "tag:TagResources",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "waf:GetWebACL",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "AlbIngressPolicy9773036A",
+        "Roles": Array [
+          Object {
+            "Ref": "EksDefaultCapacityInstanceRole2307F75A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "AwsAuthmanifest00905E16": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -63,23 +196,7 @@ Object {
                   "Arn",
                 ],
               },
-              "\\\\\\",\\\\\\"username\\\\\\":\\\\\\"system:node:{{EC2PrivateDNSName}}\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:bootstrappers\\\\\\",\\\\\\"system:nodes\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":role/cm-dai.kurosawa\\\\\\",\\\\\\"username\\\\\\":\\\\\\"dai.kurosawa\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":role/cm-kato.ryo\\\\\\",\\\\\\"username\\\\\\":\\\\\\"kato.ryo\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":role/cm-koji.hamada\\\\\\",\\\\\\"username\\\\\\":\\\\\\"koji.hamada\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::",
-              Object {
-                "Ref": "AWS::AccountId",
-              },
-              ":role/cm-jogan.naoki\\\\\\",\\\\\\"username\\\\\\":\\\\\\"jogan.naoki\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]}]\\",\\"mapUsers\\":\\"[]\\",\\"mapAccounts\\":\\"[]\\"}}]",
+              "\\\\\\",\\\\\\"username\\\\\\":\\\\\\"system:node:{{EC2PrivateDNSName}}\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:bootstrappers\\\\\\",\\\\\\"system:nodes\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::111111111111:role/cm-dai.kurosawa\\\\\\",\\\\\\"username\\\\\\":\\\\\\"dai.kurosawa\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::111111111111:role/cm-kato.ryo\\\\\\",\\\\\\"username\\\\\\":\\\\\\"kato.ryo\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::111111111111:role/cm-koji.hamada\\\\\\",\\\\\\"username\\\\\\":\\\\\\"koji.hamada\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]},{\\\\\\"rolearn\\\\\\":\\\\\\"arn:aws:iam::111111111111:role/cm-jogan.naoki\\\\\\",\\\\\\"username\\\\\\":\\\\\\"jogan.naoki\\\\\\",\\\\\\"groups\\\\\\":[\\\\\\"system:masters\\\\\\"]}]\\",\\"mapUsers\\":\\"[]\\",\\"mapAccounts\\":\\"[]\\"}}]",
             ],
           ],
         },
@@ -114,10 +231,16 @@ Object {
                 "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPublicSubnet2Subnet691E08A351552740",
               },
               Object {
+                "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPublicSubnet3SubnetBE12F0B65CC33245",
+              },
+              Object {
                 "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet1Subnet536B997AFD4CC940",
               },
               Object {
                 "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet2Subnet3788AAA1380949A3",
+              },
+              Object {
+                "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet3SubnetF258B56EC7CF32DD",
               },
             ],
           },
@@ -147,17 +270,7 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "eks.",
-                      Object {
-                        "Ref": "AWS::URLSuffix",
-                      },
-                    ],
-                  ],
-                },
+                "Service": "eks.amazonaws.com",
               },
             },
           ],
@@ -202,7 +315,6 @@ Object {
             "IpProtocol": "-1",
           },
         ],
-        "SecurityGroupIngress": Array [],
         "VpcId": Object {
           "Fn::ImportValue": "GivenStack:ExportsOutputRefVpc8378EB38272D6E3A",
         },
@@ -232,11 +344,11 @@ Object {
     },
     "EksDefaultCapacityASGDF4BB67B": Object {
       "Properties": Object {
-        "DesiredCapacity": "2",
+        "DesiredCapacity": "3",
         "LaunchConfigurationName": Object {
           "Ref": "EksDefaultCapacityLaunchConfigD448D3B6",
         },
-        "MaxSize": "2",
+        "MaxSize": "3",
         "MinSize": "1",
         "Tags": Array [
           Object {
@@ -266,6 +378,9 @@ Object {
           },
           Object {
             "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet2Subnet3788AAA1380949A3",
+          },
+          Object {
+            "Fn::ImportValue": "GivenStack:ExportsOutputRefVpcPrivateSubnet3SubnetF258B56EC7CF32DD",
           },
         ],
       },
@@ -384,6 +499,38 @@ Object {
               ],
             ],
           },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AdministratorAccess",
+              ],
+            ],
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "TestEksStack/Eks/DefaultCapacity",
+          },
+          Object {
+            "Key": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "kubernetes.io/cluster/",
+                  Object {
+                    "Ref": "EksBC5472D2",
+                  },
+                ],
+              ],
+            },
+            "Value": "owned",
+          },
         ],
       },
       "Type": "AWS::IAM::Role",
@@ -398,7 +545,6 @@ Object {
             "IpProtocol": "-1",
           },
         ],
-        "SecurityGroupIngress": Array [],
         "Tags": Array [
           Object {
             "Key": "Name",
@@ -494,7 +640,7 @@ Object {
         "IamInstanceProfile": Object {
           "Ref": "EksDefaultCapacityInstanceProfileFD992D93",
         },
-        "ImageId": "ami-0fde798d17145fae1",
+        "ImageId": "ami-0a67c71d2ab43d36f",
         "InstanceType": "m5.large",
         "SecurityGroups": Array [
           Object {

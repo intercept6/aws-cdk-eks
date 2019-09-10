@@ -1,17 +1,23 @@
 #!/usr/bin/env node
 import "source-map-support/register";
-import { App } from "@aws-cdk/core";
-import { NetworkStack } from "../lib/network-stack";
-import { EksStack } from "../lib/eks-stack";
+import {App} from "@aws-cdk/core";
+import {NetworkStack} from "../lib/network-stack";
+import {EksStack} from "../lib/eks-stack";
+import {Context} from "../lib/context";
+import {DomainStack} from "../lib/domain-stack";
 
 const app = new App();
-
-const region = process.env.CDK_DEFAULT_REGION || "ap-northeast-1";
+const stage: string = app.node.tryGetContext("stage");
+const params: Context = app.node.tryGetContext(stage);
 
 const networkStack = new NetworkStack(app, "NetworkStack", {
-  env: { region: region }
+  env: params.env
+});
+const domainStack = new DomainStack(app, "DomainStack", {
+  env: params.env
 });
 const eksStack = new EksStack(app, "EksStack", {
-  env: { region: region },
+  env: params.env,
   vpc: networkStack.vpc
 });
+eksStack.addDependency(domainStack, "TLS certificate for ELB");

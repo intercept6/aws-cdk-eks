@@ -19,4 +19,4 @@ spec:
             # by the ALB Ingress Controller, providing distinction between
             # clusters.
             ## TODO: CDK側でクラスタ名を固定する？ B/Gデプロイについても検討が必要
-            - --cluster-name=cluster-05c336ee-fe67-410e-9d25-9e5397057daa
+            - --cluster-name=cluster-9c8c0b46-eb03-4c14-8cd1-4ef03fc7c7e4

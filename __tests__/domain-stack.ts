@@ -1,10 +1,9 @@
-import { App, Stack } from "@aws-cdk/core";
+import { App } from "@aws-cdk/core";
 import { SynthUtils } from "@aws-cdk/assert";
-import { EksStack } from "../lib/eks-stack";
-import { Vpc } from "@aws-cdk/aws-ec2";
+import { DomainStack } from "../lib/domain-stack";
 import {Context} from "../lib/context";
 
-describe("eks", () => {
+describe("domain", () => {
   test("default", () => {
     const app = new App();
     const stage = "test";
@@ -18,13 +17,8 @@ describe("eks", () => {
     };
     app.node.setContext(stage, params);
 
-    const givenStack = new Stack(app, "GivenStack", {
-      env:params.env
-    });
-    const vpc = new Vpc(givenStack, "Vpc");
-    const stack = new EksStack(app, "TestEksStack", {
-      env:params.env,
-      vpc: vpc
+    const stack = new DomainStack(app, "TestDomainStack", {
+      env: params.env
     });
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
