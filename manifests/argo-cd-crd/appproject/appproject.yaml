@@ -13,7 +13,7 @@ spec:
   roles:
     - description: Classmethod
       groups:
-        - classmethod
+        - classmethod:awsexcel-golang
       name: cm
       policies:
         - "p, proj:default:cm, applications, *, default/*, allow"

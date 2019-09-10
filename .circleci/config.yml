@@ -93,7 +93,7 @@ commands:
       - run:
           name: Create Namespace(argocd)
           command: |
-            kubectl create namespace argocd
+            kubectl create namespace argocd ; :
       - run:
           name: Create Namespace(argocd)
           command: |
