@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`domain default 1`] = `
+Object {
+  "Outputs": Object {
+    "AcmArn": Object {
+      "Value": Object {
+        "Fn::GetAtt": Array [
+          "CertificateCertificateRequestorResource2890C6B7",
+          "Arn",
+        ],
+      },
+    },
+  },
+  "Parameters": Object {
+    "CertificateCertificateRequestorFunctionCodeArtifactHashB6FA7A49": Object {
+      "Description": "Artifact hash for asset \\"TestDomainStack/Certificate/CertificateRequestorFunction/Code\\"",
+      "Type": "String",
+    },
+    "CertificateCertificateRequestorFunctionCodeS3BucketB11F2FC2": Object {
+      "Description": "S3 bucket for asset \\"TestDomainStack/Certificate/CertificateRequestorFunction/Code\\"",
+      "Type": "String",
+    },
+    "CertificateCertificateRequestorFunctionCodeS3VersionKeyA887D87E": Object {
+      "Description": "S3 key for asset version \\"TestDomainStack/Certificate/CertificateRequestorFunction/Code\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CertificateCertificateRequestorFunction5E845413": Object {
+      "DependsOn": Array [
+        "CertificateCertificateRequestorFunctionServiceRoleDefaultPolicy3C8845BC",
+        "CertificateCertificateRequestorFunctionServiceRoleC04C13DA",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "CertificateCertificateRequestorFunctionCodeS3BucketB11F2FC2",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "CertificateCertificateRequestorFunctionCodeS3VersionKeyA887D87E",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "CertificateCertificateRequestorFunctionCodeS3VersionKeyA887D87E",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.certificateRequestHandler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CertificateCertificateRequestorFunctionServiceRoleC04C13DA",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs8.10",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CertificateCertificateRequestorFunctionServiceRoleC04C13DA": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CertificateCertificateRequestorFunctionServiceRoleDefaultPolicy3C8845BC": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "acm:RequestCertificate",
+                "acm:DescribeCertificate",
+                "acm:DeleteCertificate",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "route53:GetChange",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "route53:changeResourceRecordSets",
+              "Effect": "Allow",
+              "Resource": "arn:aws:route53:::hostedzone/DUMMY",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CertificateCertificateRequestorFunctionServiceRoleDefaultPolicy3C8845BC",
+        "Roles": Array [
+          Object {
+            "Ref": "CertificateCertificateRequestorFunctionServiceRoleC04C13DA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "CertificateCertificateRequestorResource2890C6B7": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DomainName": "*.example.com",
+        "HostedZoneId": "DUMMY",
+        "Region": "ap-northeast-1",
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CertificateCertificateRequestorFunction5E845413",
+            "Arn",
+          ],
+        },
+        "SubjectAlternativeNames": Array [
+          "example.com",
+        ],
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;

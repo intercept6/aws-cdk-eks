@@ -6,6 +6,10 @@ node_modules
 process.yml
 .kube/*
 
+# k8s
+*.decrypted.yaml
+*.decrypted.yml
+
 # CDK asset staging directory
 .cdk.staging
 cdk.out

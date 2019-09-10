@@ -12,6 +12,22 @@ cd aws-cdk-eks
 npm install
 ```
 
+複合化されたシークレットマニフェストの生成
+```bash
+ kubesec decrypt manifests/argo-cd/cluster-install/secret/argocd-secret.yaml > manifests/argo-cd/cluster-install/secret/argocd-secret.decrypted.yaml
+ ```
+
+kubesecで使用するCMKの作成
+```bash
+KEY_ARN=$(aws kms create-key | jq -r '.KeyMetadata.Arn')
+```
+
+```bash
+kubesec encrypt \
+  --key="aws:${KEY_ARN}" \
+  -i manifests/argo-cd/cluster-install/secret/argocd-secret.yaml
+```
+
 ## コマンド
 
 | コマンド | 説明 | 備考 |

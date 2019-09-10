@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-dns
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests/external-dns/
+    repoURL: https://github.com/kmd2kmd/aws-cdk-eks
+    targetRevision: master
+  syncPolicy:
+    automated:
+      prune: true

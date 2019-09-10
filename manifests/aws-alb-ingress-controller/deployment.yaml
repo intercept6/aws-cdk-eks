@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alb-ingress-controller
+spec:
+  template:
+    spec:
+      containers:
+        - name: alb-ingress-controller
+          image: docker.io/amazon/aws-alb-ingress-controller:v1.1.2
+          args:
+            # Setting the ingress-class flag below ensures that only ingress resources with the
+            # annotation kubernetes.io/ingress.class: "alb" are respected by the controller. You may
+            # choose any class you'd like for this controller to respect.
+            - --ingress-class=alb
+
+            # REQUIRED
+            # Name of your cluster. Used when naming resources created
+            # by the ALB Ingress Controller, providing distinction between
+            # clusters.
+            ## TODO: CDK側でクラスタ名を固定する？ B/Gデプロイについても検討が必要
+            - --cluster-name=cluster-9c8c0b46-eb03-4c14-8cd1-4ef03fc7c7e4
