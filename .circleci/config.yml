@@ -91,9 +91,9 @@ commands:
   k8s_init:
     steps:
       - run:
-          name: Create Namespace(argocd)
+          name: Create Namespace
           command: |
-            kubectl create namespace argocd ; :
+            kubectl apply -f manifests/namespace
       - run:
           name: Create Namespace(argocd)
           command: |
