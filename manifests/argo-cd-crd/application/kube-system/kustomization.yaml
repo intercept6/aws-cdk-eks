@@ -6,3 +6,4 @@ resources:
   - external-dns/application.yaml
   - kube-state-metrics/application.yaml
   - metrics-server/application.yaml
+  - sealed-secrets/application.yaml
