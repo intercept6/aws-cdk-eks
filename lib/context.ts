@@ -1,6 +1,6 @@
-import {Environment, StackProps} from "@aws-cdk/core";
+import { Environment, StackProps } from "@aws-cdk/core";
 
 export interface Context {
-    env: Environment
-    domain: string
+  env: Environment;
+  domain: string;
 }

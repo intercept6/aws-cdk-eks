@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import "source-map-support/register";
-import {App} from "@aws-cdk/core";
-import {NetworkStack} from "../lib/network-stack";
-import {EksStack} from "../lib/eks-stack";
-import {Context} from "../lib/context";
-import {DomainStack} from "../lib/domain-stack";
+import { App } from "@aws-cdk/core";
+import { NetworkStack } from "../lib/network-stack";
+import { EksStack } from "../lib/eks-stack";
+import { Context } from "../lib/context";
+import { DomainStack } from "../lib/domain-stack";
 
 const app = new App();
 const stage: string = app.node.tryGetContext("stage");
