@@ -12,6 +12,7 @@ executors:
       - image: circleci/node:10.16.0
     environment:
       AWS_DEFAULT_REGION: "ap-northeast-1"
+      KUBESEC: "/usr/bin/kubesec"
       KUBESEC_VERSION: "0.9.2"
 
 commands:
@@ -88,8 +89,9 @@ commands:
       - run:
           name: Install kubesec
           command: |
-            curl -sSL https://github.com/shyiko/kubesec/releases/download/${KUBESEC_VERSION}/kubesec-${KUBESEC_VERSION}-linux-amd64 \
-              -o kubesec && chmod a+x kubesec
+            curl -sSL "https://github.com/shyiko/kubesec/
+            releases/download/${KUBESEC_VERSION}/kubesec-${KUBESEC_VERSION}-linux-amd64" -o ${KUBESEC}
+            chmod a+x ${KUBESEC}
   k8s_init:
     steps:
       - run:
@@ -99,7 +101,7 @@ commands:
       - run:
           name: Decrypt Secrets
           command: |
-            kubesec decrypt -i manifests/argo-cd/cluster-install/secret/argocd-secret.yaml
+            ${KUBESEC} decrypt -i manifests/argo-cd/cluster-install/secret/argocd-secret.yaml
       - run:
           name: Create Namespace(argocd)
           command: |
