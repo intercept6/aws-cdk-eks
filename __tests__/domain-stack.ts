@@ -1,7 +1,7 @@
 import { App } from "@aws-cdk/core";
 import { SynthUtils } from "@aws-cdk/assert";
 import { DomainStack } from "../lib/domain-stack";
-import {Context} from "../lib/context";
+import { Context } from "../lib/context";
 
 describe("domain", () => {
   test("default", () => {

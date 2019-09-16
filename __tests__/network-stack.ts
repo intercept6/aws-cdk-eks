@@ -1,7 +1,7 @@
 import { App } from "@aws-cdk/core";
 import { SynthUtils } from "@aws-cdk/assert";
 import { NetworkStack } from "../lib/network-stack";
-import {Context} from "../lib/context";
+import { Context } from "../lib/context";
 
 describe("network", () => {
   test("default", () => {
