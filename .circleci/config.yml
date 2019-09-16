@@ -82,18 +82,16 @@ commands:
             stack_detail=$(aws --region ${AWS_DEFAULT_REGION} cloudformation describe-stacks --stack-name EksStack)
             cluster_name=$(echo ${stack_detail} | jq -r '.Stacks[].Outputs | map(select(.OutputKey == "EksClusterName" ).OutputValue)[]')
             aws --region ${AWS_DEFAULT_REGION} eks update-kubeconfig --name ${cluster_name}
-#  aws_setup:
-#    steps:
-#      - aws-cli/install
-#  k8s_setup:
-#    steps:
-#      - kubernetes/install
   k8s_init:
     steps:
       - run:
           name: Create Namespace(argocd)
           command: |
             kubectl create namespace argocd ; :
+      - run:
+          name: Decrypt Secrets
+          command: |
+            kubesec decrypt -i manifests/argo-cd/cluster-install/secret/argocd-secret.yaml
       - run:
           name: Create Namespace(argocd)
           command: |
