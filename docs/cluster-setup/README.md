@@ -11,6 +11,6 @@ aws kms create-alias --alias-name ${KEY_ALIAS} --target-key-id ${KEY_ARN}
 vim manifests/argo-cd/cluster-install/secret/argocd-secret.yaml
 # 暗号化
 kubesec encrypt \
-  --key=${KEY_ALIAS} \
+  --key=${KEY_ARN} \
   -i manifests/argo-cd/cluster-install/secret/argocd-secret.yaml
 ```
