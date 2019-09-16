@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "format": "eslint --fix \"./**/*.{ts,json}\"",
+    "format": "eslint --fix \"./**/*[^d].ts\"",
     "cdk": "cdk",
     "diff": "cdk diff --context stage=dev",
     "deploy": "tsc && cdk deploy *Stack --context stage=dev --require-approval never",
@@ -18,7 +18,8 @@
     "test_update": "jest --updateSnapshot"
   },
   "pre-commit": [
-    "test"
+    "test",
+    "format"
   ],
   "devDependencies": {
     "@aws-cdk/assert": "1.7.0",

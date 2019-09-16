@@ -3,8 +3,7 @@ module.exports = {
     plugins: ["@typescript-eslint"],
     parser: "@typescript-eslint/parser",
     parserOptions: {
-        sourceType: "module",
-        project: "./tsconfig.json"
+        sourceType: "module"
     },
     rules: {
         "@typescript-eslint/adjacent-overload-signatures": "error",

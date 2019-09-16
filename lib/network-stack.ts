@@ -1,10 +1,8 @@
-import {Stack, StackProps, Construct, CfnOutput, Tag} from "@aws-cdk/core";
-import { Vpc, SubnetType, CfnSubnet} from "@aws-cdk/aws-ec2";
+import { Stack, StackProps, Construct, CfnOutput, Tag } from "@aws-cdk/core";
+import { Vpc, SubnetType, CfnSubnet } from "@aws-cdk/aws-ec2";
 import { DnsValidatedCertificate } from "@aws-cdk/aws-certificatemanager";
 import { HostedZone } from "@aws-cdk/aws-route53";
 import { Context } from "./context";
-
-
 
 export class NetworkStack extends Stack {
   public readonly vpc: Vpc;
@@ -29,6 +27,5 @@ export class NetworkStack extends Stack {
       // let cfnPublicSubnet = publicSubnets[i].node.defaultChild as CfnSubnet;
       // cfnPublicSubnet.tags.setTag("kubernetes.io/role/elb", "1");
     }
-
   }
 }

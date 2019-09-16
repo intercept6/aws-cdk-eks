@@ -1,8 +1,19 @@
-import {CfnOutput, Construct, Stack, StackProps} from "@aws-cdk/core";
-import {AwsAuth, Cluster} from "@aws-cdk/aws-eks";
-import {InstanceClass, InstanceSize, InstanceType, IVpc} from "@aws-cdk/aws-ec2";
-import {Effect, ManagedPolicy, PolicyStatement, Role, Policy} from "@aws-cdk/aws-iam";
-import {Context} from "./context";
+import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core";
+import { AwsAuth, Cluster } from "@aws-cdk/aws-eks";
+import {
+  InstanceClass,
+  InstanceSize,
+  InstanceType,
+  IVpc
+} from "@aws-cdk/aws-ec2";
+import {
+  Effect,
+  ManagedPolicy,
+  PolicyStatement,
+  Role,
+  Policy
+} from "@aws-cdk/aws-iam";
+import { Context } from "./context";
 
 interface EksStackProps extends StackProps {
   vpc: IVpc;
@@ -48,7 +59,7 @@ export class EksStack extends Stack {
           "acm:ListCertificates",
           "acm:GetCertificate"
         ],
-        resources: ["*"],
+        resources: ["*"]
       }),
       new PolicyStatement({
         effect: Effect.ALLOW,
@@ -72,7 +83,7 @@ export class EksStack extends Stack {
           "ec2:ModifyNetworkInterfaceAttribute",
           "ec2:RevokeSecurityGroupIngress"
         ],
-        resources: ["*"],
+        resources: ["*"]
       }),
       new PolicyStatement({
         effect: Effect.ALLOW,
@@ -111,7 +122,7 @@ export class EksStack extends Stack {
           "elasticloadbalancing:SetSubnets",
           "elasticloadbalancing:SetWebACL"
         ],
-        resources: ["*"],
+        resources: ["*"]
       }),
       new PolicyStatement({
         effect: Effect.ALLOW,
@@ -120,14 +131,12 @@ export class EksStack extends Stack {
           "iam:GetServerCertificate",
           "iam:ListServerCertificates"
         ],
-        resources: ["*"],
+        resources: ["*"]
       }),
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: [
-          "cognito-idp:DescribeUserPoolClient"
-        ],
-        resources: ["*"],
+        actions: ["cognito-idp:DescribeUserPoolClient"],
+        resources: ["*"]
       }),
       new PolicyStatement({
         effect: Effect.ALLOW,
@@ -137,23 +146,18 @@ export class EksStack extends Stack {
           "waf-regional:AssociateWebACL",
           "waf-regional:DisassociateWebACL"
         ],
-        resources: ["*"],
+        resources: ["*"]
       }),
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: [
-          "tag:GetResources",
-          "tag:TagResources"
-        ],
-        resources: ["*"],
+        actions: ["tag:GetResources", "tag:TagResources"],
+        resources: ["*"]
       }),
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: [
-          "waf:GetWebACL"
-        ],
-        resources: ["*"],
-      }),
+        actions: ["waf:GetWebACL"],
+        resources: ["*"]
+      })
     ];
     new Policy(this, "AlbIngressPolicy", {
       roles: [asg.role],
