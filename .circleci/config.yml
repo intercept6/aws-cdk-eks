@@ -12,6 +12,7 @@ executors:
       - image: circleci/node:10.16.0
     environment:
       AWS_DEFAULT_REGION: "ap-northeast-1"
+      KUBESEC_VERSION: "0.9.2"
 
 commands:
   restore_npm:
@@ -82,6 +83,13 @@ commands:
             stack_detail=$(aws --region ${AWS_DEFAULT_REGION} cloudformation describe-stacks --stack-name EksStack)
             cluster_name=$(echo ${stack_detail} | jq -r '.Stacks[].Outputs | map(select(.OutputKey == "EksClusterName" ).OutputValue)[]')
             aws --region ${AWS_DEFAULT_REGION} eks update-kubeconfig --name ${cluster_name}
+  install_kubesec:
+    steps:
+      - run:
+          name: Install kubesec
+          command: |
+            curl -sSL https://github.com/shyiko/kubesec/releases/download/${KUBESEC_VERSION}/kubesec-${KUBESEC_VERSION}-linux-amd64 \
+              -o kubesec && chmod a+x kubesec
   k8s_init:
     steps:
       - run:
@@ -137,6 +145,7 @@ jobs:
       - kubernetes/install
       - assume_role
       - update_kubeconfig
+      - install_kubesec
       - k8s_init
 
 workflows:
