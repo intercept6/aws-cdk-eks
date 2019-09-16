@@ -17,6 +17,7 @@ Object {
             Object {
               "Ref": "EksBC5472D2",
             },
+            " --region ap-northeast-1",
           ],
         ],
       },
@@ -26,6 +27,20 @@ Object {
         "Fn::GetAtt": Array [
           "EksDefaultCapacityInstanceRole2307F75A",
           "Arn",
+        ],
+      },
+    },
+    "EksGetTokenCommandB31A1E5B": Object {
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws eks get-token --cluster-name ",
+            Object {
+              "Ref": "EksBC5472D2",
+            },
+            " --region ap-northeast-1",
+          ],
         ],
       },
     },
@@ -640,7 +655,7 @@ Object {
         "IamInstanceProfile": Object {
           "Ref": "EksDefaultCapacityInstanceProfileFD992D93",
         },
-        "ImageId": "ami-0a67c71d2ab43d36f",
+        "ImageId": "ami-0262013b4d50142a2",
         "InstanceType": "m5.large",
         "SecurityGroups": Array [
           Object {
@@ -661,7 +676,8 @@ set -o xtrace
                 Object {
                   "Ref": "EksBC5472D2",
                 },
-                " --use-max-pods 29
+                " --kubelet-extra-args \\"--node-labels lifecycle=OnDemand\\"
+/opt/aws/bin/cfn-signal --exit-code $? --stack TestEksStack --resource EksDefaultCapacityASGDF4BB67B --region ap-northeast-1
 cd /tmp
 yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
 systemctl start amazon-ssm-agent",

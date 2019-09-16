@@ -11,7 +11,7 @@
     "cdk": "cdk",
     "diff": "cdk diff --context stage=dev",
     "deploy": "tsc && cdk deploy *Stack --context stage=dev --require-approval never",
-    "synth": "tsc && cdk synth",
+    "synth": "tsc && cdk synth *Stack --context stage=dev ",
     "ci_diff": "cdk diff --context stage=dev 2>&1 | sed -r \"s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})*)?m//g\" || true",
     "ci_deploy": "cdk deploy *Stack --context stage=dev --require-approval never",
     "test": "jest",
