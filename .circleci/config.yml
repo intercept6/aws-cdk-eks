@@ -88,8 +88,8 @@ commands:
       - run:
           name: Install kubesec
           command: |
-          curl -sSL https://github.com/shyiko/kubesec/releases/download/${KUBESEC_VERSION}/kubesec-${KUBESEC_VERSION}-linux-amd64 \
-            -o kubesec && chmod a+x kubesec
+            curl -sSL https://github.com/shyiko/kubesec/releases/download/${KUBESEC_VERSION}/kubesec-${KUBESEC_VERSION}-linux-amd64 \
+              -o kubesec && chmod a+x kubesec
   k8s_init:
     steps:
       - run:
