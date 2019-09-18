@@ -30,7 +30,7 @@
     "@types/node": "10.14.16",
     "@typescript-eslint/eslint-plugin": "2.3.0",
     "@typescript-eslint/parser": "2.3.0",
-    "eslint-plugin-prettier": "3.1.0",
+    "eslint-plugin-prettier": "3.1.1",
     "husky": "3.0.5",
     "jest": "24.9.0",
     "lint-staged": "9.2.5",
