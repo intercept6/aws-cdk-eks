@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@0.1.16
   jq: circleci/jq@1.9.0
-  kubernetes: circleci/kubernetes@0.6.0
+  kubernetes: circleci/kubernetes@0.7.0
 
 executors:
   default:
