@@ -38,7 +38,7 @@
     "prettier": "1.19.1",
     "ts-jest": "25.2.1",
     "ts-node": "8.6.2",
-    "typescript": "3.7.5"
+    "typescript": "3.8.2"
   },
   "dependencies": {
     "@aws-cdk/aws-certificatemanager": "1.9.0",
